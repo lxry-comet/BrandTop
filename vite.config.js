@@ -1,16 +1,14 @@
-import { defineConfig } from 'vite';
-import { glob } from 'glob';
-import injectHTML from 'vite-plugin-html-inject';
-import FullReload from 'vite-plugin-full-reload';
+import react from '@vitejs/plugin-react'
+import path from 'path'
+import { defineConfig } from 'vite'
 
+// https://vite.dev/config/
 export default defineConfig({
-  base: '/react-vite_templates/',
-  root: 'src',
-  build: {
-    rollupOptions: {
-      input: glob.sync('./src/**/*.html'),
-    },
-    outDir: '../dist',
-  },
-  plugins: [injectHTML(), FullReload(['./src/**/**.html'])],
-});
+	plugins: [react()],
+	resolve: {
+		alias: {
+			'@': path.resolve(__dirname, 'src')
+		}
+	},
+	base: '/brand-top/'
+})

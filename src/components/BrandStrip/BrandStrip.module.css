@@ -1,0 +1,47 @@
+.brandstrip{
+	background: #222222;
+	border-bottom: 1px solid #333333;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
+}
+
+.brandstrip__track{
+	display: flex;
+	align-items: center;
+	width: max-content;
+	padding: 14px 0;
+	animation: brandScroll 32s linear infinite;
+}
+
+/* zatrzymanie animacji po najechaniu myszką (opcjonalne, ale przyjemne) */
+.brandstrip:hover .brandstrip__track{
+	animation-play-state: paused;
+}
+
+.brandstrip__name{
+	display: flex;
+	align-items: center;
+	white-space: nowrap;
+	color: #ffffff;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	font-size: 18px;
+	padding: 0 24px;
+}
+
+.brandstrip__sep{
+	color: #e8590c;
+	font-size: 8px;
+}
+
+@keyframes brandScroll {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		/* przesuwamy o połowę szerokości - bo lista jest zduplikowana x2 */
+		transform: translateX(-50%);
+	}
+}

@@ -1,17 +1,18 @@
 {
-  "name": "react-vite_templates",
+  "name": "brand-top",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/react-vite_templates/",
+    "build": "vite build --base=/brand-top/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
+    "react-icons": "^5.7.0",
     "react-router-dom": "^7.17.0"
   },
   "devDependencies": {

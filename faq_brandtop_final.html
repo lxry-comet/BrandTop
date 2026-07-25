@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ — Najczęściej Zadawane Pytania | BrandTop</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --text-color: #334155;
+            --heading-color: #0f172a;
+            --bg-color: #f8fafc;
+            --container-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --accent-color: #3b82f6;
+            --hover-bg: #f1f5f9;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.7;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 50px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--heading-color);
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .meta-info {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .meta-info p {
+            margin: 4px 0;
+        }
+
+        .category-section {
+            margin-top: 35px;
+            margin-bottom: 20px;
+        }
+
+        .category-title {
+            color: var(--heading-color);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Accordion Professional Styling */
+        details {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        details[open] {
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.05);
+        }
+
+        summary {
+            list-style: none;
+            padding: 16px 20px;
+            font-weight: 600;
+            color: var(--heading-color);
+            cursor: pointer;
+            position: relative;
+            padding-right: 50px;
+            user-select: none;
+            transition: background-color 0.2s ease;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        summary:hover {
+            background-color: var(--hover-bg);
+        }
+
+        /* Custom Animated Arrow Icon */
+        summary::after {
+            content: "";
+            position: absolute;
+            right: 20px;
+            top: 50px;
+            margin-top: -12px;
+            width: 8px;
+            height: 8px;
+            border-right: 2px solid var(--text-color);
+            border-bottom: 2px solid var(--text-color);
+            transform: rotate(45deg);
+            transition: transform 0.3s ease, top 0.3s ease;
+        }
+
+        details[open] summary::after {
+            transform: rotate(225deg);
+            margin-top: -8px;
+        }
+
+        .faq-content {
+            padding: 20px;
+            background-color: #fafafa;
+            border-top: 1px solid var(--border-color);
+        }
+
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
+
+        ol, ul {
+            margin-bottom: 12px;
+            padding-left: 24px;
+        }
+
+        ol:last-child, ul:last-child {
+            margin-bottom: 0;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        li::marker {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .contact-box {
+            background-color: #f1f5f9;
+            border-left: 4px solid var(--primary-color);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin: 20px 0;
+        }
+
+        .contact-box p {
+            margin-bottom: 6px;
+            text-align: left;
+        }
+
+        .contact-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        .highlight-box {
+            background-color: #eff6ff;
+            border: 1px dashed var(--accent-color);
+            padding: 8px 20px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--primary-color);
+            border-radius: 6px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px 10px;
+            }
+            .container {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            .category-title {
+                font-size: 16px;
+            }
+            summary {
+                padding: 14px 15px;
+                font-size: 14px;
+                padding-right: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>FAQ — Najczęściej Zadawane Pytania</h1>
+        <div class="meta-info">
+            <p><strong>SKLEP INTERNETOWY BRANDTOP</strong></p>
+            <p>Wersja 1.0 | Data aktualizacji: [do uzupeлnienia]</p>
+        </div>
+    </header>
+
+    <!-- Kategoria: Zamówienia -->
+    <div class="category-section">
+        <div class="category-title">
+            <span>🛒</span> Zamówienia
+        </div>
+
+        <details>
+            <summary>Jak złożyć zamówienie?</summary>
+            <div class="faq-content">
+                <p>Aby złożyć zamówienie w sklepie BrandTop należy:</p>
+                <ol>
+                    <li>Wybrać interesujący produkt.</li>
+                    <li>Wybrać odpowiedni rozmiar.</li>
+                    <li>Dodać produkt do koszyka.</li>
+                    <li>Uzupełnić dane dostawy.</li>
+                    <li>Wybrać metodę płatności.</li>
+                    <li>Potwierdzić zamówienie.</li>
+                </ol>
+                <p style="margin-top: 10px;">Po prawidłowym złożeniu zamówienia Klient otrzyma potwierdzenie na podany adres e-mail.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Czy muszę posiadać konto, aby zrobić zakupy?</summary>
+            <div class="faq-content">
+                <p>Nie. W sklepie BrandTop można dokonać zakupu bez zakładania konta.</p>
+                <p>Posiadanie konta umożliwia jednak:</p>
+                <ul>
+                    <li>sprawdzanie historii zamówień,</li>
+                    <li>szybsze składanie kolejnych zamówień,</li>
+                    <li>zapisanie adresów dostawy,</li>
+                    <li>dodawanie produktów do listy ulubionych.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>Czy mogę zmienić lub anulować zamówienie?</summary>
+            <div class="faq-content">
+                <p>Jeżeli zamówienie nie zostało jeszcze przekazane do realizacji, istnieje możliwość jego zmiany lub anulowania.</p>
+                <p>W tym celu należy jak najszybciej skontaktować się ze Sklepem:</p>
+                <div class="contact-box" style="margin: 10px 0 0 0; padding: 12px 15px;">
+                    <p><strong>E-mail:</strong> lakos827@gmail.com</p>
+                    <p><strong>Telefon:</strong> +48 881 405 113</p>
+                </div>
+            </div>
+        </details>
+    </div>
+
+    <!-- Kategoria: Produkty -->
+    <div class="category-section">
+        <div class="category-title">
+            <span>👟</span> Produkty
+        </div>
+
+        <details>
+            <summary>Czy wszystkie produkty są nowe?</summary>
+            <div class="faq-content">
+                <p>Tak. Wszystkie produkty dostępne w sklepie BrandTop są nowe i pochodzą z legalnych źródeł.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Czy produkty są oryginalne?</summary>
+            <div class="faq-content">
+                <p>Tak. BrandTop oferuje wyłącznie oryginalne produkty pochodzące od sprawdzonych dostawców.</p>
+                <p>Dbamy o jakość oraz autentyczność każdego produktu.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Jak wybrać odpowiedni rozmiar?</summary>
+            <div class="faq-content">
+                <p>Przy każdym produkcie staramy się udostępnić informacje pomagające dobrać odpowiedni rozmiar.</p>
+                <p>Jeżeli masz wątpliwości dotyczące rozmiaru, możesz skontaktować się z naszym zespołem, który pomoże w wyborze.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Czy zdjęcia produktów przedstawiają rzeczywisty produkt?</summary>
+            <div class="faq-content">
+                <p>Tak. Zdjęcia przedstawiają oferowane produkty. Należy jednak pamiętać, że kolory mogą delikatnie różnić się w zależności od ustawień ekranu urządzenia.</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- Kategoria: Dostawa -->
+    <div class="category-section">
+        <div class="category-title">
+            <span>🚚</span> Dostawa
+        </div>
+
+        <details>
+            <summary>Jak długo trwa realizacja zamówienia?</summary>
+            <div class="faq-content">
+                <p>Standardowy czas przygotowania zamówienia wynosi:</p>
+                <div class="highlight-box">1–3 dni robocze</div>
+                <p>Po wysłaniu przesyłki Klient otrzyma informację z możliwością jej śledzenia.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>Jakie metody dostawy są dostępne?</summary>
+            <div class="faq-content">
+                <p>BrandTop korzysta z popularnych metod dostawy dostępnych w Polsce, między innymi:</p>
+                <ul>
+                    <li>InPost Paczkomaty,</li>
+                    <li>InPost Kurier,</li>
+                    <li>DPD,</li>
+                    <li>DHL,</li>
+                    <li>Orlen Paczka,</li>
+                    <li>inne dostępne firmy kurierskie.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>Czy mogę śledzić swoją przesyłkę?</summary>
+            <div class="faq-content">
+                <p>Tak. Po wysłaniu zamówienia Klient otrzymuje numer przesyłki umożliwiający jej śledzenie.</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- Kategoria: Płatności -->
+    <div class="category-section">
+        <div class="category-title">
+            <span>💳</span> Płatności
+        </div>
+
+        <details>
+            <summary>Jakie metody płatności są dostępne?</summary>
+            <div class="faq-content">
+                <p>W sklepie BrandTop dostępne są popularne metody płatności:</p>
+                <ul>
+                    <li>BLIK,</li>
+                    <li>karty płatnicze Visa i Mastercard,</li>
+                    <li>Apple Pay,</li>
+                    <li>Google Pay,</li>
+                    <li>przelew bankowy,</li>
+                    <li>inne dostępne metody płatności podczas składania zamówienia.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>Czy płatności w sklepie są bezpieczne?</summary>
+            <div class="faq-content">
+                <p>Tak. BrandTop korzysta z bezpiecznych metod płatności zapewniających ochronę danych Klienta.</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- Kategoria: Zwroty i reklamacje -->
+    <div class="category-section">
+        <div class="category-title">
+            <span>🔄</span> Zwroty i reklamacje
+        </div>
+
+        <details>
+            <summary>Czy mogę zwrócić zakupiony produkt?</summary>
+            <div class="faq-content">
+                <p>Tak. Konsument ma prawo odstąpić od umowy i zwrócić produkt w ciągu 14 dni kalendarzowych od jego otrzymania.</p>
+            </div>
+        </details>
+
+        <details>
+            <summary>W jakim stanie musi być produkt przy zwrocie?</summary>
+            <div class="faq-content">
+                <p>Produkt powinien:</p>
+                <ul>
+                    <li>być nieużywany,</li>
+                    <li>posiadać oryginalne opakowanie (jeżeli zostało dostarczone),</li>
+                    <li>nie posiadać śladów użytkowania.</li>
+                </ul>
+            </div>
+        </details>
+
+        <details>
+            <summary>Co zrobić, jeśli produkt posiada wadę?</summary>
+            <div class="faq-content">
+                <p>W przypadku otrzymania wadliwego produktu należy skontaktować się ze Sklepem. Należy podać:</p>
+                <ul>
+                    <li>numer zamówienia,</li>
+                    <li>opis problemu,</li>
+                    <li>zdjęcia produktu (jeżeli jest to możliwe).</li>
+                </ul>
+            </div>
+        </details>
+    </div>
+
+    <!-- Kategoria: Konto użytkownika -->
+    <div class="category-section">
+        <div class="category-title">
+            <span>👤</span> Konto użytkownika
+        </div>
+
+        <details>
+            <summary>Jak założyć konto?</summary>
+            <div class="faq-content">
+                <p>Aby utworzyć konto należy:</p>
+                <ol>
+                    <li>Wybrać opcję „Rejestracja”.</li>
+                    <li>Uzupełnić wymagane dane.</li>
+                    <li>Ustawić hasło.</li>
+                    <li>Potwierdzić konto.</li>
+                </ol>
+            </div>
+        </details>
+
+        <details>
+            <summary>Nie pamiętam hasła. Co zrobić?</summary>
+            <div class="faq-content">
+                <p>Na stronie logowania należy wybrać opcję odzyskiwania hasła i postępować zgodnie z instrukcjami.</p>
+            </div>
+        </details>
+    </div>
+
+    <!-- Sekcja: Kontakt -->
+    <div class="category-section" style="margin-top: 45px;">
+        <div class="category-title">
+            <span>📞</span> Kontakt
+        </div>
+        <p>Jeżeli nie znalazłeś odpowiedzi na swoje pytanie, skontaktuj się z nami. Nasz zespół chętnie pomoże w sprawach dotyczących produktów, zamówień oraz dostawy.</p>
+        <div class="contact-box">
+            <p><strong>BrandTop</strong></p>
+            <p><strong>E-mail:</strong> lakos827@gmail.com</p>
+            <p><strong>Telefon:</strong> +48 881 405 113</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
