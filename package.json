@@ -1,11 +1,11 @@
 {
-  "name": "brand-top",
+  "name": "BrandTop",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build --base=/brand-top/",
+    "build": "vite build --base=/BrandTop/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
