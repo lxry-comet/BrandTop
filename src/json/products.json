@@ -1,566 +1,1022 @@
 [
   {
+    "id": 1,
     "name": "Nike Air Force 1 '07",
     "price": 499,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 2,
     "name": "Adidas Campus 00s",
     "price": 399,
     "currency": "zl",
     "oldPrice": 449,
     "discount": "11%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 3,
     "name": "Jordan Air Jordan 1 Retro",
     "price": 699,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 4,
     "name": "Prosto Classic Low",
     "price": 349,
     "currency": "zl",
     "oldPrice": 399,
     "discount": "13%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 5,
     "name": "Pitbull West Coast",
     "price": 449,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 6,
     "name": "NewBalance 550 White",
     "price": 429,
     "currency": "zl",
     "oldPrice": 499,
     "discount": "14%",
     "discountAmount": 70,
-    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 7,
     "name": "Nike Dunk Low Retro",
     "price": 479,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 8,
     "name": "Adidas Forum Bold",
     "price": 399,
     "currency": "zl",
     "oldPrice": 479,
     "discount": "17%",
     "discountAmount": 80,
-    "img": "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 9,
     "name": "Jordan Jumpman MVP",
     "price": 549,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 10,
     "name": "Prosto Runner Pro",
     "price": 329,
     "currency": "zl",
     "oldPrice": 379,
     "discount": "13%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 11,
     "name": "Pitbull East Coast",
     "price": 469,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 12,
     "name": "NewBalance 574 Classic",
     "price": 379,
     "currency": "zl",
     "oldPrice": 429,
     "discount": "12%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 13,
     "name": "Nike Air Max 90",
     "price": 529,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 14,
     "name": "Adidas Gazelle Bold",
     "price": 369,
     "currency": "zl",
     "oldPrice": 419,
     "discount": "12%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 15,
     "name": "Jordan Air Jordan 4",
     "price": 749,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 16,
     "name": "Prosto Skate Low",
     "price": 299,
     "currency": "zl",
     "oldPrice": 349,
     "discount": "14%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 17,
     "name": "Nike Air Max 97",
     "price": 599,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 18,
     "name": "Adidas Ultraboost 5.0",
     "price": 649,
     "currency": "zl",
     "oldPrice": 749,
     "discount": "13%",
     "discountAmount": 100,
-    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 19,
     "name": "Jordan Air Jordan 11",
     "price": 799,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 20,
     "name": "NewBalance 990v5 Grey",
     "price": 699,
     "currency": "zl",
     "oldPrice": 799,
     "discount": "13%",
     "discountAmount": 100,
-    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 21,
     "name": "Nike Blazer Mid '77",
     "price": 399,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 22,
     "name": "Adidas Samba OG",
     "price": 349,
     "currency": "zl",
     "oldPrice": 399,
     "discount": "13%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1578162821627-53c38d9fba90?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 23,
     "name": "Puma Suede Classic",
     "price": 289,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 24,
     "name": "Reebok Club C 85",
     "price": 259,
     "currency": "zl",
     "oldPrice": 329,
     "discount": "21%",
     "discountAmount": 70,
-    "img": "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 25,
     "name": "Vans Old Skool",
     "price": 249,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1579338559194-a162d19bf842?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 26,
     "name": "Converse Chuck 70",
     "price": 299,
     "currency": "zl",
     "oldPrice": 349,
     "discount": "14%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 27,
     "name": "Nike React Pegasus 40",
     "price": 479,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 28,
     "name": "Adidas Stan Smith",
     "price": 329,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 29,
     "name": "Asics Gel-Kayano 14",
     "price": 549,
     "currency": "zl",
     "oldPrice": 649,
     "discount": "15%",
     "discountAmount": 100,
-    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 30,
     "name": "Nike Vomero 5",
     "price": 629,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1612902377756-414b213d2d7e?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 31,
     "name": "NewBalance 2002R",
     "price": 579,
     "currency": "zl",
     "oldPrice": 679,
     "discount": "15%",
     "discountAmount": 100,
-    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 32,
     "name": "Salomon XT-6",
     "price": 699,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1562183241-b9372a2e7b23?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 33,
     "name": "Jordan Air Jordan 3",
     "price": 729,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600269452121-4f2416e55c28?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 34,
     "name": "Nike P-6000",
     "price": 449,
     "currency": "zl",
     "oldPrice": 499,
     "discount": "10%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 35,
     "name": "Adidas Handball Spezial",
     "price": 379,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 36,
     "name": "Puma Palermo",
     "price": 319,
     "currency": "zl",
     "oldPrice": 369,
     "discount": "14%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 37,
     "name": "Nike Sportswear Futura Czapka",
     "price": 79,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 38,
     "name": "Adidas Trefoil Czapka",
     "price": 69,
     "currency": "zl",
     "oldPrice": 89,
     "discount": "22%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 39,
     "name": "Jordan Jumpman Skarpety",
     "price": 49,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 40,
     "name": "NewBalance Plecak NB Essential",
     "price": 149,
     "currency": "zl",
     "oldPrice": 199,
     "discount": "25%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 41,
     "name": "Nike Heritage Torba",
     "price": 119,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 42,
     "name": "Adidas Performance Czapeczka",
     "price": 59,
     "currency": "zl",
     "oldPrice": 79,
     "discount": "25%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 43,
     "name": "Puma Pasek Logo",
     "price": 89,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 44,
     "name": "Vans Skarpety Classic",
     "price": 39,
     "currency": "zl",
     "oldPrice": 49,
     "discount": "20%",
     "discountAmount": 10,
-    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 45,
     "name": "Nike Futura Plecak",
     "price": 179,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 46,
     "name": "Jordan Flight Czapka",
     "price": 89,
     "currency": "zl",
     "oldPrice": 109,
     "discount": "18%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 47,
     "name": "Adidas Sokker 3-Pak",
     "price": 69,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 48,
     "name": "Converse Chuck Patch Czapka",
     "price": 59,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 49,
     "name": "Nike Dri-FIT Opaska",
     "price": 39,
     "currency": "zl",
     "oldPrice": 49,
     "discount": "20%",
     "discountAmount": 10,
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 50,
     "name": "NewBalance Torba Shopper",
     "price": 99,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 51,
     "name": "Puma Czapka Beanie",
     "price": 49,
     "currency": "zl",
     "oldPrice": 69,
     "discount": "29%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556306535-0f09a5373a08?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 52,
     "name": "Reebok Plecak Classic",
     "price": 129,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 53,
     "name": "Nike Swoosh Skarpety",
     "price": 45,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 54,
     "name": "Vans Plecak Old Skool",
     "price": 139,
     "currency": "zl",
     "oldPrice": 169,
     "discount": "18%",
     "discountAmount": 30,
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 55,
     "name": "Adidas Pasek Originals",
     "price": 79,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1624222247344-550fb60583dc?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 56,
     "name": "Jordan Air Jordan Torba",
     "price": 159,
     "currency": "zl",
     "oldPrice": 199,
     "discount": "20%",
     "discountAmount": 40,
-    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 57,
     "name": "Nike Swoosh Hoodie",
     "price": 249,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 58,
     "name": "Adidas Essentials Tee",
     "price": 99,
     "currency": "zl",
     "oldPrice": 129,
     "discount": "23%",
     "discountAmount": 30,
-    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 59,
     "name": "Jordan Jumpman Joggers",
     "price": 279,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 60,
     "name": "NewBalance NB Athletics Hoodie",
     "price": 229,
     "currency": "zl",
     "oldPrice": 279,
     "discount": "18%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 61,
     "name": "Puma Essentials Tee",
     "price": 79,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 62,
     "name": "Vans Off The Wall Tee",
     "price": 89,
     "currency": "zl",
     "oldPrice": 109,
     "discount": "18%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 63,
     "name": "Nike Dri-FIT Szorty",
     "price": 139,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 64,
     "name": "Adidas Adicolor Joggers",
     "price": 199,
     "currency": "zl",
     "oldPrice": 249,
     "discount": "20%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 65,
     "name": "Jordan Air Graphic Tee",
     "price": 129,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 66,
     "name": "Converse Star Chevron Hoodie",
     "price": 219,
     "currency": "zl",
     "oldPrice": 269,
     "discount": "19%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 67,
     "name": "Nike Sportswear Joggers",
     "price": 189,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 68,
     "name": "Adidas Tiro 23 Szorty",
     "price": 109,
     "currency": "zl",
     "oldPrice": 139,
     "discount": "22%",
     "discountAmount": 30,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 69,
     "name": "Puma BMW MMS Hoodie",
     "price": 299,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 70,
     "name": "Reebok Classics Tee",
     "price": 79,
     "currency": "zl",
     "oldPrice": 99,
     "discount": "20%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 71,
     "name": "Nike ACG Kurtka",
     "price": 449,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 72,
     "name": "Jordan Flight Joggers",
     "price": 259,
     "currency": "zl",
     "oldPrice": 309,
     "discount": "16%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 73,
     "name": "Adidas Firebird Kurtka",
     "price": 329,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 74,
     "name": "Vans Skate Hoodie",
     "price": 199,
     "currency": "zl",
     "oldPrice": 249,
     "discount": "20%",
     "discountAmount": 50,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 75,
     "name": "NewBalance NB Dry Tee",
     "price": 89,
     "currency": "zl",
-    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=400&fit=crop"
+    ]
   },
   {
+    "id": 76,
     "name": "Puma Essentials Szorty",
     "price": 89,
     "currency": "zl",
     "oldPrice": 109,
     "discount": "18%",
     "discountAmount": 20,
-    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    "img": "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+    "gallery": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop",
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?w=400&h=400&fit=crop"
+    ]
   }
 ]

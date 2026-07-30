@@ -1,0 +1,91 @@
+.catalogWrapper {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	align-items: center;
+	margin: 16px 0 10px;
+}
+.btnStyle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	background: transparent;
+	color: #ffffff;
+	border: none;
+	padding: 10px 18px;
+	border-radius: 24px;
+	font-weight: 700;
+	font-size: 13px;
+	cursor: pointer;
+	transition: var(--transition-bounce);
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	font-family: var(--font);
+	text-decoration: none;
+	margin-right: 8px;
+	margin-bottom: 8px;
+	min-height: var(--tap-target-min);
+	white-space: nowrap;
+}
+.catalog_btn {
+	composes: btnStyle;
+	justify-self: start;
+	background: rgba(255, 255, 255, 0.16);
+	backdrop-filter: blur(14px) saturate(160%);
+	-webkit-backdrop-filter: blur(14px) saturate(160%);
+	border: 1px solid rgba(255, 255, 255, 0.16);
+}
+.catalog_title {
+	justify-self: center;
+	margin: 0;
+
+	font-size: 26px;
+  font-weight: 900;
+  margin: 20px 0 6px;
+  letter-spacing: -0.5px;
+  color: #ffffff;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+}
+.catalog_title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+.catalog_FilterBtn {
+	justify-self: end;
+	margin: 0;
+
+	padding: 10px 22px;
+	background: rgba(255, 255, 255, 0.18);
+	backdrop-filter: blur(14px) saturate(160%);
+	-webkit-backdrop-filter: blur(14px) saturate(160%);
+	color: #ffffff;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+	border: 2px solid rgba(255, 255, 255, 0.45);
+	border-top-color: rgba(255, 255, 255, 0.45);
+	border-right-color: rgba(255, 255, 255, 0.45);
+	border-bottom-color: rgba(255, 255, 255, 0.45);
+	border-left-color: rgba(255, 255, 255, 0.45);
+	border-radius: 30px;
+	font-weight: 700;
+	font-size: 14px;
+	cursor: pointer;
+	text-transform: uppercase;
+	font-family: var(--font);
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	transition: var(--transition-smooth);
+	white-space: nowrap;
+}
+.catalog_FilterBtn:hover {
+	background: rgba(255, 255, 255, 0.3);
+	border-color: #ffffff;
+}

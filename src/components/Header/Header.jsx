@@ -30,7 +30,7 @@ export class Header extends Component {
 		const { showTitle } = this.state
 		const navLinks = [
 			{ label: 'Główna', path: '/' },
-			{ label: 'Katalog', path: '/collections' },
+			{ label: 'Katalog', path: '/catalog' },
 			{ label: 'Wideo', path: '/wideo' },
 			{ label: 'O nas', path: '/contact' }
 		]
