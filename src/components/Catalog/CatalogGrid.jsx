@@ -1,33 +1,37 @@
-import Reacct from 'react';
+import React from 'react';
 import css from '../Products/Products.module.css'
 
-export default function ColectionsGrid({ products }){
-	return(
-							<div className={css.products__list}>
-						{products.map((product, index) => {
-							return (
-								<div className={css.products__itemcard} key={product.id ?? index}>
-									<div className={css.products__itemwrap}>
-										<div className={css.products__imgwrap}>
-											<img src={product.img} alt={product.name} />
-										</div>
-										<div className={css.products__body}>
-											{product.discount && (
-												<span className={css.products__sale}>{product.discount}</span>
-											)}
-											<span className={css.products__name}>{product.name}</span>
-											<span className={css.products__sub}></span>
-											<div className={css.products__price}>
-												{product.oldPrice && (
-													<span className={css.old__price}>{product.oldPrice} zł</span>
-												)}
-												<span className={css.sale__price}>{product.price} zł</span>
-											</div>
-										</div>
-									</div>
+const PLACEHOLDER_IMG = 'https://placehold.co/400x400?text=Brand-Top'
+
+export default function CatalogGrid({ products }) {
+	return (
+		<div className={css.products__list}>
+			{products.map((product, index) => {
+				return (
+					<div className={css.products__itemcard} key={product.id ?? index}>
+						<div className={css.products__itemwrap}>
+							<div className={css.products__imgwrap}>
+								<img src={product.img || PLACEHOLDER_IMG} alt={product.name} />
+							</div>
+							<div className={css.products__body}>
+								{product.discount && (
+									<span className={css.products__sale}>{product.discount}</span>
+								)}
+								<span className={css.products__name}>{product.name}</span>
+								<span className={css.products__sub}></span>
+								<div className={css.products__price}>
+									{product.oldPrice && (
+										<span className={css.old__price}>{product.oldPrice} zł</span>
+									)}
+									<span className={css.sale__price}>
+										{product.price != null ? `${product.price} zł` : 'Cena wkrótce'}
+									</span>
 								</div>
-							)
-						})}
+							</div>
+						</div>
 					</div>
+				)
+			})}
+		</div>
 	)
 }

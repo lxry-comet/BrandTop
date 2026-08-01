@@ -173,3 +173,12 @@
 background: #ffffff;
   color: #222222;
 }
+.categoryNav {
+  padding: 6px 16px;
+  border-bottom: 1px solid #333333;
+  max-width: 1300px;
+  margin: 0 auto;
+  gap: 6px;
+  flex-wrap: wrap;
+  animation: fadeInDown 0.3s ease;
+}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 //? imports styles
 import css from './Header.module.css'
@@ -8,6 +9,7 @@ import css from './Header.module.css'
 import { FaHeart } from 'react-icons/fa'
 import { FaUser } from 'react-icons/fa'
 import { FaCartShopping } from 'react-icons/fa6'
+import CategoryNav from './CategoryNav.jsx'
 
 export class Header extends Component {
 	state = {
@@ -69,9 +71,9 @@ export class Header extends Component {
 								<div className={css.header__btn}>
 									<FaUser />
 								</div>
-								<div className={css.header__btn}>
+								<Link to='/cart' className={css.header__btn}>
 									<FaCartShopping />
-								</div>
+								</Link>
 							</div>
 						</div>
 						<div className={css.header__search}>
@@ -100,6 +102,7 @@ export class Header extends Component {
 								></input>
 							</div>
 						</div>
+						<CategoryNav />
 					</div>
 				</header>
 			</>

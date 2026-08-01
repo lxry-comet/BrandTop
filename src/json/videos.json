@@ -1,0 +1,66 @@
+[
+	{
+		"id": 1,
+		"title": "Top 5 sneakersów 2025",
+		"thumb": "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=dQw4w9WgXcQ",
+		"description": "Przegląd najbardziej oczekiwanych modeli tego roku.",
+		"content": "Szczegółowa analiza pięciu głównych premier, porównanie technologii i stylu."
+	},
+	{
+		"id": 2,
+		"title": "Recenzja Air Jordan 4",
+		"thumb": "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=9bZkp7q19f0",
+		"description": "Szczegółowa recenzja kultowego modelu Air Jordan 4.",
+		"content": "Opowiadamy o materiałach, komforcie i cechach legendarnych sneakersów."
+	},
+	{
+		"id": 3,
+		"title": "Adidas vs Nike — co wybrać?",
+		"thumb": "https://img.youtube.com/vi/3JZ_D3ELwOQ/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=3JZ_D3ELwOQ",
+		"description": "Odwieczna konfrontacja gigantów obuwia sportowego.",
+		"content": "Analiza amortyzacji, designu i trwałości popularnych modeli."
+	},
+	{
+		"id": 4,
+		"title": "New Balance 550 na nogach",
+		"thumb": "https://img.youtube.com/vi/kJQP7kiw5Fk/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=kJQP7kiw5Fk",
+		"description": "Przymiarka i recenzja New Balance 550.",
+		"content": "Pokazujemy, jak leżą na nodze, omawiamy rozmiarówkę i styl."
+	},
+	{
+		"id": 5,
+		"title": "Streetwear lookbook 2025",
+		"thumb": "https://img.youtube.com/vi/2Vv-BfVoq4g/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=2Vv-BfVoq4g",
+		"description": "Główne trendy mody ulicznej w jednym filmie.",
+		"content": "Zebraliśmy najlepsze stylizacje z pokazów mody i ulic metropolii."
+	},
+	{
+		"id": 6,
+		"title": "Unboxing Prosto Classic",
+		"thumb": "https://img.youtube.com/vi/tAGnKpE4NCI/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=tAGnKpE4NCI",
+		"description": "Szczera recenzja rosyjskiej marki Prosto.",
+		"content": "Rozpakowujemy, oglądamy szwy, materiały i porównujemy z konkurencją."
+	},
+	{
+		"id": 7,
+		"title": "Pitbull West Coast — recenzja",
+		"thumb": "https://img.youtube.com/vi/kJQP7kiw5Fk/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=kJQP7kiw5Fk",
+		"description": "Odważne sneakersy Pitbull West Coast.",
+		"content": "Testujemy w warunkach miejskich, oceniamy wytrzymałość i design."
+	},
+	{
+		"id": 8,
+		"title": "Główne trendy streetwear",
+		"thumb": "https://img.youtube.com/vi/9bZkp7q19f0/hqdefault.jpg",
+		"url": "https://youtube.com/watch?v=9bZkp7q19f0",
+		"description": "Co będzie modne w tym sezonie?",
+		"content": "Analizujemy kolekcje marek i zdjęcia streetstyle."
+	}
+]
