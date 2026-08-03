@@ -25,6 +25,7 @@ import {Catalog} from '@/components/Catalog/Catalog.jsx'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import {Wideo} from '@/components/Wideo/Wideo.jsx'
 import {Cart} from '@/components/Cart/Cart.jsx'
+import {Favorites} from '@/components/Favorites/Favorites.jsx'
 
 function HomePage() {
 	return (
@@ -51,6 +52,7 @@ function AppRoutes() {
 			<Route path='/newproducts' element={<Newproducts/>}/>
 			<Route path='/wideo' element={<Wideo/>}/>
 			<Route path='/cart' element={<Cart/>}/>
+			<Route path='/favorites' element={<Favorites/>}/>
 			<Route path='/contact' element={<Contacts/>}/>
 		</Routes>
 	)

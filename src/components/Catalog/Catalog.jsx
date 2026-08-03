@@ -20,7 +20,12 @@ export class Catalog extends Component {
 		data: [],
 		loading: true,
 		error: null,
-		visibleCount: visibleProductsCount
+		visibleCount: visibleProductsCount,
+		filterPanelOpen: false
+	}
+
+	toggleFilterPanel = () => {
+		this.setState(prev => ({ filterPanelOpen: !prev.filterPanelOpen }))
 	}
 
 	componentDidMount() {
@@ -65,7 +70,10 @@ export class Catalog extends Component {
 							← Strona główna
 						</Link>
 						<h3 className={css.catalog_title}>Wszystkie produkty</h3>
-						<button class={css.catalog_FilterBtn} onclick='toggleFilterPanel()'>
+						<button
+							className={css.catalog_FilterBtn}
+							onClick={this.toggleFilterPanel}
+						>
 							Filtry
 						</button>
 					</div>

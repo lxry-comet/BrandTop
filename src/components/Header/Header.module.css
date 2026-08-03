@@ -20,7 +20,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-	cursor: pointer;
   background: transparent;
   flex-shrink: 0;
   max-width: 1300px;             
@@ -181,4 +180,112 @@ background: #ffffff;
   gap: 6px;
   flex-wrap: wrap;
   animation: fadeInDown 0.3s ease;
+}
+
+/* ==================== BURGER MENU ==================== */
+.burger__btn {
+	display: none;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 5px;
+	width: 44px;
+	height: 44px;
+	background: transparent;
+	border: none;
+	cursor: pointer;
+	padding: 0;
+	flex-shrink: 0;
+}
+.burger__btn span {
+	display: block;
+	width: 22px;
+	height: 2px;
+	background: #ffffff;
+	border-radius: 2px;
+	transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.burger__btnOpen span:nth-child(1) {
+	transform: translateY(7px) rotate(45deg);
+}
+.burger__btnOpen span:nth-child(2) {
+	opacity: 0;
+}
+.burger__btnOpen span:nth-child(3) {
+	transform: translateY(-7px) rotate(-45deg);
+}
+
+@media (max-width: 767px) {
+	.burger__btn {
+		display: flex;
+	}
+
+	.header__btnDesktopOnly {
+		display: none;
+	}
+
+	.header__search {
+		display: none;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+		position: absolute;
+		top: 100%;
+		left: 0;
+		right: 0;
+		background: #222222;
+		padding: 16px;
+		border-bottom: 1px solid #333333;
+		z-index: 20;
+	}
+	.header__searchOpen {
+		display: flex;
+	}
+	.navbar {
+		flex-direction: column;
+		gap: 6px;
+	}
+	.navbar .nav__link {
+		width: 100%;
+	}
+}
+
+/* ==================== MOBILE MENU ACTIONS (heart/user/cart) ==================== */
+.mobile_actions {
+	display: none;
+}
+@media (max-width: 767px) {
+	.mobile_actions {
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		padding-bottom: 10px;
+		margin-bottom: 6px;
+		border-bottom: 1px solid #333333;
+	}
+	.mobile_actionLink {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 12px 14px;
+		border-radius: 12px;
+		background: rgba(255, 255, 255, 0.05);
+		color: #ffffff;
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 13px;
+		text-transform: uppercase;
+		letter-spacing: 0.6px;
+		cursor: pointer;
+		transition: background 0.2s ease;
+		min-height: var(--tap-target-min);
+	}
+	.mobile_actionLink:hover {
+		background: rgba(255, 255, 255, 0.12);
+	}
+	.mobile_actionLink svg {
+		font-size: 17px;
+		flex-shrink: 0;
+		color: var(--accent);
+	}
 }

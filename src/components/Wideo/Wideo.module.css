@@ -77,6 +77,29 @@
 	.back_btn { font-size: 12px; padding: 8px 14px; }
 }
 
+@media (max-width: 480px) {
+	.page_header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+		margin: 12px 0 8px;
+	}
+	.header_placeholder {
+		display: none;
+	}
+	.section_title {
+		flex: 1 0 100%;
+		order: 3;
+		margin-top: 4px;
+		text-align: center;
+	}
+	.section_title::after {
+		left: 50%;
+		transform: translateX(-50%);
+	}
+}
+
 /* ==================== VIDEO GRID ==================== */
 .video_grid {
 	display: grid;
@@ -92,6 +115,9 @@
 }
 @media (min-width: 1024px) {
 	.video_grid { grid-template-columns: repeat(4, 1fr); gap: 22px; }
+}
+@media (max-width: 479px) {
+	.video_grid { display: block; }
 }
 
 .empty_text {
@@ -115,6 +141,16 @@
 }
 .vid_card:active {
 	transform: scale(0.98);
+}
+@media (max-width: 479px) {
+	.vid_card {
+		display: block;
+		width: 100%;
+		margin: 0 0 14px;
+	}
+	.vid_card:last-child {
+		margin-bottom: 0;
+	}
 }
 @media (hover: hover) {
 	.vid_card:hover {
@@ -184,4 +220,158 @@
 }
 @media (max-width: 640px) {
 	.vid_title { font-size: 12px; padding: 8px 10px 12px; }
+}
+
+/* ==================== VIDEO DETAIL ==================== */
+.video_detail {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 16px 0 60px;
+	max-width: 720px;
+}
+
+.video_detail_title {
+	font-weight: 900;
+	font-size: 24px;
+	color: #ffffff;
+	margin: 0;
+	letter-spacing: -0.3px;
+}
+@media (max-width: 640px) {
+	.video_detail_title { font-size: 19px; }
+}
+
+.video_preview {
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	object-fit: cover;
+	border-radius: var(--radius-lg, 18px);
+	background: #1a1a1a;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.video_description {
+	color: #cccccc;
+	font-size: 14px;
+	line-height: 1.6;
+	margin: 0;
+}
+.video_description strong {
+	color: #ffffff;
+}
+
+.btn_youtube {
+	align-self: flex-start;
+	background: #ff0000;
+	color: #ffffff;
+	padding: 12px 22px;
+	border: none;
+	border-radius: 28px;
+	font-weight: 700;
+	font-size: 14px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	text-decoration: none;
+}
+.btn_youtube:hover {
+	background: #cc0000;
+	transform: scale(1.03);
+}
+
+/* ==================== RELATED PRODUCT ==================== */
+.related_product {
+	margin-top: 10px;
+	padding-top: 20px;
+	border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.related_heading {
+	color: #ffffff;
+	font-size: 15px;
+	font-weight: 800;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	margin: 0 0 14px;
+}
+
+.related_card {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	background: rgba(0, 0, 0, 0.32);
+	backdrop-filter: blur(22px) saturate(180%);
+	-webkit-backdrop-filter: blur(22px) saturate(180%);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 16px;
+	padding: 14px;
+}
+@media (max-width: 480px) {
+	.related_card { flex-direction: column; align-items: flex-start; }
+}
+
+.related_img {
+	width: 96px;
+	height: 96px;
+	object-fit: cover;
+	border-radius: 12px;
+	flex-shrink: 0;
+	background: #1a1a1a;
+}
+@media (max-width: 480px) {
+	.related_img { width: 100%; height: 180px; }
+}
+
+.related_info {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.related_brand {
+	font-size: 12px;
+	color: #999999;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	font-weight: 700;
+}
+
+.related_name {
+	font-size: 15px;
+	color: #ffffff;
+	font-weight: 700;
+}
+
+.related_price {
+	font-size: 14px;
+	color: var(--accent);
+	font-weight: 800;
+	margin-bottom: 6px;
+}
+
+.btn_more {
+	align-self: flex-start;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--accent);
+	color: #ffffff;
+	border: none;
+	border-radius: 20px;
+	padding: 8px 16px;
+	font-weight: 700;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	text-decoration: none;
+	transition: all 0.2s ease;
+}
+.btn_more:hover {
+	transform: translateY(-2px);
+	filter: brightness(1.1);
 }

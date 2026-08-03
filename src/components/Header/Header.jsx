@@ -13,7 +13,8 @@ import CategoryNav from './CategoryNav.jsx'
 
 export class Header extends Component {
 	state = {
-		showTitle: false
+		showTitle: false,
+		menuOpen: false
 		// activeIndexNavLinks: 0
 	}
 	interval = null
@@ -25,11 +26,17 @@ export class Header extends Component {
 	componentWillUnmount() {
 		clearInterval(this.interval)
 	}
+	toggleMenu = () => {
+		this.setState(prev => ({ menuOpen: !prev.menuOpen }))
+	}
+	closeMenu = () => {
+		this.setState({ menuOpen: false })
+	}
 	render() {
 		//! [1] Блок диструктуризації props та state
 
 		//! [2] Блок обчислювальних дaних
-		const { showTitle } = this.state
+		const { showTitle, menuOpen } = this.state
 		const navLinks = [
 			{ label: 'Główna', path: '/' },
 			{ label: 'Katalog', path: '/catalog' },
@@ -65,24 +72,68 @@ export class Header extends Component {
 								</div>
 							</div>
 							<div className={css.header__actions}>
-								<div className={css.header__btn}>
+								<Link
+									to='/favorites'
+									className={`${css.header__btn} ${css.header__btnDesktopOnly}`}
+									onClick={this.closeMenu}
+								>
 									<FaHeart />
-								</div>
-								<div className={css.header__btn}>
+								</Link>
+								<div className={`${css.header__btn} ${css.header__btnDesktopOnly}`}>
 									<FaUser />
 								</div>
-								<Link to='/cart' className={css.header__btn}>
+								<Link
+									to='/cart'
+									className={`${css.header__btn} ${css.header__btnDesktopOnly}`}
+									onClick={this.closeMenu}
+								>
 									<FaCartShopping />
 								</Link>
+								<button
+									type='button'
+									className={`${css.burger__btn} ${menuOpen ? css.burger__btnOpen : ''}`}
+									onClick={this.toggleMenu}
+									aria-label='Menu'
+									aria-expanded={menuOpen}
+								>
+									<span></span>
+									<span></span>
+									<span></span>
+								</button>
 							</div>
 						</div>
-						<div className={css.header__search}>
+						<div
+							className={`${css.header__search} ${menuOpen ? css.header__searchOpen : ''}`}
+						>
+							<div className={css.mobile_actions}>
+								<Link
+									to='/favorites'
+									className={css.mobile_actionLink}
+									onClick={this.closeMenu}
+								>
+									<FaHeart />
+									<span>Ulubione</span>
+								</Link>
+								<Link
+									to='/cart'
+									className={css.mobile_actionLink}
+									onClick={this.closeMenu}
+								>
+									<FaCartShopping />
+									<span>Koszyk</span>
+								</Link>
+								<div className={css.mobile_actionLink}>
+									<FaUser />
+									<span>Konto</span>
+								</div>
+							</div>
 							<div className={css.navbar}>
 								{navLinks.map(({ label, path }) => (
 									<NavLink
 										key={path}
 										to={path}
 										end={path === '/'}
+										onClick={this.closeMenu}
 										className={({ isActive }) =>
 											`${css.nav__link} ${isActive ? css.active : ''}`
 										}
