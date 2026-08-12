@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
+import { useNavigate } from 'react-router-dom'
 import css from './Products.module.css'
 
-export default class ProductCard extends Component {
+class ProductCard extends Component {
 	state = {
 		currentImg: 0,
 		liked: false
@@ -38,6 +39,11 @@ export default class ProductCard extends Component {
 		this.setState(prev => ({ liked: !prev.liked }))
 	}
 
+	handleCardClick = () => {
+		const { product, navigate } = this.props
+		navigate(`/product/${product.id}`)
+	}
+
 	render() {
 		const { product } = this.props
 		const { currentImg, liked } = this.state
@@ -45,7 +51,13 @@ export default class ProductCard extends Component {
 		const hasMultiple = gallery.length > 1
 
 		return (
-			<div className={css.products__itemcard}>
+			<div
+				className={css.products__itemcard}
+				onClick={this.handleCardClick}
+				role="button"
+				tabIndex={0}
+				onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.handleCardClick() } }}
+			>
 				<div className={css.products__itemwrap}>
 					<div className={css.products__imgwrap}>
 						<img src={gallery[currentImg]} alt={product.name} />
@@ -108,3 +120,12 @@ export default class ProductCard extends Component {
 		)
 	}
 }
+
+// Функціональна обгортка: useNavigate — це хук, тому дістаємо його тут
+// і передаємо в клас-компонент пропсом (той самий підхід, що й для Header з useLocation).
+function ProductCardWithNavigate(props) {
+	const navigate = useNavigate()
+	return <ProductCard {...props} navigate={navigate} />
+}
+
+export default ProductCardWithNavigate

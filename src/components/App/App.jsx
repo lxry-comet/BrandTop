@@ -26,13 +26,14 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import {Wideo} from '@/components/Wideo/Wideo.jsx'
 import {Cart} from '@/components/Cart/Cart.jsx'
 import {Favorites} from '@/components/Favorites/Favorites.jsx'
+import {ProductPageRoute} from '@/components/ProductPage/ProductPage.jsx'
 
 function HomePage() {
 	return (
 		<>
 			<Hero/>
-			<Bestsellers/>
-			<Newproducts/>
+			{/* <Bestsellers/> */}
+			{/* <Newproducts/> */}
 		</>
 	)
 }
@@ -45,11 +46,12 @@ function AppRoutes() {
 	return (
 		<Routes>
 			<Route path='/' element={<HomePage/>}/>
-			<Route path='/hero' element={<Hero/>}/>
+			{/* <Route path='/hero' element={<Hero/>}/> */}
 			{/* <Route path='/collections' element={<Collections/>}/> */}
 			<Route path='/catalog' element={<Catalog key={location.search} />}/>
-			<Route path='/bestsellers' element={<Bestsellers/>}/>
-			<Route path='/newproducts' element={<Newproducts/>}/>
+			<Route path='/product/:id' element={<ProductPageRoute/>}/>
+			{/* <Route path='/bestsellers' element={<Bestsellers/>}/> */}
+			{/* <Route path='/newproducts' element={<Newproducts/>}/> */}
 			<Route path='/wideo' element={<Wideo/>}/>
 			<Route path='/cart' element={<Cart/>}/>
 			<Route path='/favorites' element={<Favorites/>}/>

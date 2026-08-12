@@ -1,29 +1,94 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+
+//? import supabase
+import { supabase } from '@/lib/supabaseClient.js'
 
 //? imports styles
-import css from './Hero.module.css'
-
-
+import productsStyles from '../Products/Products.module.css'
+import heroStyles from '../Hero/Hero.module.css'
+import catalogStyles from './Catalog.module.css'
 //? imports components
-import {Products} from '@/components/Products/Products.jsx'
+import CatalogGrid from './CatalogGrid.jsx'
 
+const css = { ...productsStyles, ...heroStyles, ...catalogStyles }
+
+const visibleProductsCount = 8
 
 export class Hero extends Component {
+	state = {
+		data: [],
+		loading: true,
+		error: null,
+		visibleCount: visibleProductsCount,
+		filterPanelOpen: false
+	}
+
+	toggleFilterPanel = () => {
+		this.setState(prev => ({ filterPanelOpen: !prev.filterPanelOpen }))
+	}
+
+	componentDidMount() {
+		this.fetchProducts()
+	}
+
+	
+	async fetchProducts() {
+		
+		const type = new URLSearchParams(window.location.search).get('type')
+
+		let query = supabase.from('products').select('*')
+		if (type) query = query.eq('type', type)
+
+		const { data, error } = await query
+
+		if (error) {
+			this.setState({ error, loading: false })
+			return
+		}
+		const mapped = data.map(item => ({
+			id: item.id,
+			name: item.name,
+			price: item.price_pln, 
+			img: item.image_url, 
+			sku: item.sku,
+			oldPrice: null,
+			discount: null,
+		}))
+
+		this.setState({ data: mapped, loading: false })
+	}
+
 	render() {
+		const { data, loading, error } = this.state
+		const visibleProducts = data.slice(0, this.state.visibleCount)
 
 		return (
 			<>
-				<section className={css.hero} id='hero'>
-					<div className='container'>
-						<div className={css.hero__bannerwrap}>
-							<a className={css.hero__bannerlink} onclick="goToSaleCatalog()" title="Zniżki do 40%">
-                <img src="https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=1300&amp;h=400&amp;fit=crop" alt="Zniżki do 40%" onerror="this.style.background='#333'; this.style.minHeight='250px';"/>
-                    <div className={css.hero__bannertext}>Zniżki do 40%</div>
-                </a>
-						</div>
-						<Products/>
+				<div className={css.products}>
+					<div className={css.catalogWrapper}>
+						<h3 className={css.catalog_title}>O b u w i e</h3>
 					</div>
-				</section>
+
+					{loading && <p>Ładowanie produktów...</p>}
+					{error && <p>Błąd wczytywania produktów: {error.message}</p>}
+					{!loading && !error && (
+						<>
+							<CatalogGrid products={visibleProducts} />
+							{/* <CatalogGrid products={data} /> */}
+							<div
+								className={css.products__btn}
+								onClick={() =>
+									this.setState(prev => ({
+										visibleCount: prev.visibleCount + visibleProductsCount
+									}))
+								}
+							>
+								Zobacz więcej
+							</div>
+						</>
+					)}
+				</div>
 			</>
 		)
 	}
