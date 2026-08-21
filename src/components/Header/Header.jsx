@@ -79,9 +79,24 @@ export class Header extends Component {
 								>
 									<FaHeart />
 								</Link>
-								<div className={`${css.header__btn} ${css.header__btnDesktopOnly}`}>
-									<FaUser />
-								</div>
+								{this.props.user ? (
+									<Link
+										to='/account'
+										className={`${css.header__btn} ${css.header__btnDesktopOnly}`}
+										aria-label='Moje konto'
+									>
+										<FaUser />
+									</Link>
+								) : (
+									<button
+										type='button'
+										className={`${css.header__btn} ${css.header__btnDesktopOnly}`}
+										onClick={this.props.onAccountClick}
+										aria-label='Zaloguj się'
+									>
+										<FaUser />
+									</button>
+								)}
 								<Link
 									to='/cart'
 									className={`${css.header__btn} ${css.header__btnDesktopOnly}`}
@@ -122,10 +137,28 @@ export class Header extends Component {
 									<FaCartShopping />
 									<span>Koszyk</span>
 								</Link>
-								<div className={css.mobile_actionLink}>
-									<FaUser />
-									<span>Konto</span>
-								</div>
+								{this.props.user ? (
+									<Link
+										to='/account'
+										className={css.mobile_actionLink}
+										onClick={this.closeMenu}
+									>
+										<FaUser />
+										<span>Moje konto</span>
+									</Link>
+								) : (
+									<button
+										type='button'
+										className={css.mobile_actionLink}
+										onClick={() => {
+											this.closeMenu()
+											this.props.onAccountClick && this.props.onAccountClick()
+										}}
+									>
+										<FaUser />
+										<span>Konto</span>
+									</button>
+								)}
 							</div>
 							<div className={css.navbar}>
 								{navLinks.map(({ label, path }) => (

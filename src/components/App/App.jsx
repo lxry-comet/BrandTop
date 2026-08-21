@@ -26,7 +26,10 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import {Wideo} from '@/components/Wideo/Wideo.jsx'
 import {Cart} from '@/components/Cart/Cart.jsx'
 import {Favorites} from '@/components/Favorites/Favorites.jsx'
+import {AuthModal} from '@/components/AuthModal/AuthModal.jsx'
+import {Account} from '@/components/Account/Account.jsx'
 import {ProductPageRoute} from '@/components/ProductPage/ProductPage.jsx'
+import { supabase } from '@/lib/supabaseClient'
 
 function HomePage() {
 	return (
@@ -50,6 +53,7 @@ function AppRoutes() {
 			{/* <Route path='/collections' element={<Collections/>}/> */}
 			<Route path='/catalog' element={<Catalog key={location.search} />}/>
 			<Route path='/product/:id' element={<ProductPageRoute/>}/>
+			<Route path='/account' element={<Account/>}/>
 			{/* <Route path='/bestsellers' element={<Bestsellers/>}/> */}
 			{/* <Route path='/newproducts' element={<Newproducts/>}/> */}
 			<Route path='/wideo' element={<Wideo/>}/>
@@ -61,14 +65,47 @@ function AppRoutes() {
 }
 
 export class App extends Component {
+	state = {
+		authOpen: false,
+		user: null
+	}
+	authSubscription = null
 
+	componentDidMount() {
+		// Odtwarza sesję zapisaną przez Supabase (localStorage) po odświeżeniu strony —
+		// bez tego state.user zawsze resetowałby się do null przy przeładowaniu, mimo
+		// że użytkownik w rzeczywistości nadal jest zalogowany.
+		supabase.auth.getSession().then(({ data }) => {
+			this.setState({ user: data.session?.user ?? null })
+		})
+
+		// Trzyma state.user w synchronizacji przy logowaniu, wylogowaniu (także z Account.jsx)
+		// i odświeżeniu tokenu — jedno źródło prawdy zamiast ręcznego ustawiania w kilku miejscach.
+		const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+			this.setState({ user: session?.user ?? null })
+		})
+		this.authSubscription = listener.subscription
+	}
+
+	componentWillUnmount() {
+		this.authSubscription?.unsubscribe()
+	}
+
+	openAuth = () => this.setState({ authOpen: true })
+  closeAuth = () => this.setState({ authOpen: false })
+  handleAuthSuccess = (user) => this.setState({ user, authOpen: false })
 	render() {
 		return (
 			<>
-				<Header/>
+				<Header onAccountClick={this.openAuth} user={this.state.user}/>
 				<BrandStrip/>
 				<AppRoutes/>
 				<Footer/>
+				<AuthModal
+          isOpen={this.state.authOpen}
+          onClose={this.closeAuth}
+          onAuthSuccess={this.handleAuthSuccess}
+          />
 			</>
 		)
 	}
