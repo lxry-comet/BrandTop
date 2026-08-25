@@ -50,6 +50,7 @@
 // zamiast/obok obecnego navTo('account') z brandtop_modified_9.html.)
 
 import { Component } from 'react';
+import { FcGoogle } from 'react-icons/fc';
 import { supabase } from '@/lib/supabaseClient';
 import css from './AuthModal.module.css';
 
@@ -138,6 +139,26 @@ export class AuthModal extends Component {
 
 		this.setState({ fieldErrors: errors })
 		return Object.keys(errors).length === 0
+	}
+
+	// signInWithOAuth przekierowuje całą stronę do Google — nie ma tu żadnego
+	// data.user do odebrania od razu. Po powrocie z Google, Supabase sam
+	// dokłada sesję do URL-a, a App.jsx (onAuthStateChange) już to wychwyci
+	// i pobierze user + role tak samo jak przy zwykłym logowaniu hasłem.
+	handleGoogleLogin = async () => {
+		this.setState({ loading: true, serverError: '' })
+
+		const { error } = await supabase.auth.signInWithOAuth({
+			provider: 'google',
+			options: {
+				redirectTo: window.location.origin
+			}
+		})
+
+		if (error) {
+			this.setState({ loading: false, serverError: this.translateError(error) })
+		}
+		// Brak "else" — przy sukcesie przeglądarka i tak zaraz opuści tę stronę.
 	}
 
 	handleSubmit = async (event) => {
@@ -350,6 +371,18 @@ export class AuthModal extends Component {
 							{mode === MODE_REGISTER ? 'Załóż konto' : 'Zaloguj się'}
 						</button>
 					</form>
+
+					<div className={css.divider}><span>lub</span></div>
+
+					<button
+						type="button"
+						className={css.googleBtn}
+						onClick={this.handleGoogleLogin}
+						disabled={loading}
+					>
+						<FcGoogle className={css.googleIcon} />
+						Kontynuuj przez Google
+					</button>
 
 					<div className={css.switchLine}>
 						{mode === MODE_LOGIN ? (
