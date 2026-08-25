@@ -218,7 +218,7 @@ export class AuthModal extends Component {
 	}
 
 	render() {
-		const { isOpen } = this.props
+		const { isOpen, notice } = this.props
 		const { mode, form, fieldErrors, serverError, successMessage, loading } = this.state
 
 		return (
@@ -236,6 +236,8 @@ export class AuthModal extends Component {
 						<div className={css.title}>Brand-Top</div>
 						<div className={css.subtitle}>Zaloguj się lub załóż konto</div>
 					</div>
+
+					{notice && <div className={css.notice}>{notice}</div>}
 
 					<div className={css.tabs}>
 						<button

@@ -27,7 +27,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
         'Brak VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY. Sprawdź plik .env.'
     );
 }
-
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
         persistSession: true,

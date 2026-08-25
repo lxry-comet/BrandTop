@@ -169,3 +169,49 @@ export async function clearCart(userId) {
     const { error } = await supabase.from('cart_items').delete().eq('user_id', userId);
     if (error) throw error;
 }
+
+// ---------------------------------------------------------------------
+// ORDERS ("Kup teraz" w koszyku)
+// ---------------------------------------------------------------------
+
+/**
+ * Składa zamówienie na podstawie aktualnej zawartości koszyka (wynik getCart()).
+ * Tworzy wiersz w `orders`, po jednym wierszu w `order_items` na każdą pozycję
+ * (unit_price = product.price_pln, bo tak nazywa się cena w realnej tabeli
+ * products — patrz supabase_schema.sql), a na końcu czyści koszyk.
+ * addressId jest opcjonalny (kolumna orders.address_id dopuszcza NULL).
+ * Zwraca utworzony wiersz `orders`.
+ */
+export async function completeOrder(userId, cartItems, addressId = null) {
+    if (!cartItems || !cartItems.length) {
+        throw new Error('Koszyk jest pusty.');
+    }
+
+    const total = cartItems.reduce(
+        (sum, item) => sum + Number(item.product?.price_pln || 0) * item.quantity,
+        0
+    );
+
+    const { data: order, error: orderError } = await supabase
+        .from('orders')
+        .insert({ user_id: userId, status: 'pending', total, address_id: addressId })
+        .select()
+        .single();
+
+    if (orderError) throw orderError;
+
+    const orderItems = cartItems.map((item) => ({
+        order_id: order.id,
+        product_id: item.product_id ?? item.product?.id,
+        size: item.size,
+        quantity: item.quantity,
+        unit_price: item.product?.price_pln ?? 0
+    }));
+
+    const { error: itemsError } = await supabase.from('order_items').insert(orderItems);
+    if (itemsError) throw itemsError;
+
+    await clearCart(userId);
+
+    return order;
+}

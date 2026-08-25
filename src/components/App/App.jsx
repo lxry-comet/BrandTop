@@ -29,6 +29,7 @@ import {Favorites} from '@/components/Favorites/Favorites.jsx'
 import {AuthModal} from '@/components/AuthModal/AuthModal.jsx'
 import {Account} from '@/components/Account/Account.jsx'
 import {ProductPageRoute} from '@/components/ProductPage/ProductPage.jsx'
+import {Admin} from '@/components/Admin/Admin.jsx'
 import { supabase } from '@/lib/supabaseClient'
 
 function HomePage() {
@@ -43,7 +44,7 @@ function HomePage() {
 
 // Вынесено в функциональный компонент, чтобы можно было
 // использовать useLocation() и пересоздавать Catalog при смене ?type=
-function AppRoutes() {
+function AppRoutes({ user, authLoading }) {
 	const location = useLocation()
 
 	return (
@@ -60,6 +61,7 @@ function AppRoutes() {
 			<Route path='/cart' element={<Cart/>}/>
 			<Route path='/favorites' element={<Favorites/>}/>
 			<Route path='/contact' element={<Contacts/>}/>
+			<Route path='/admin' element={<Admin user={user} authLoading={authLoading}/>}/>
 		</Routes>
 	)
 }
@@ -67,7 +69,11 @@ function AppRoutes() {
 export class App extends Component {
 	state = {
 		authOpen: false,
-		user: null
+		user: null,
+		// Dopóki true — sesja jeszcze się ładuje z Supabase (getSession jest async).
+		// Bez tego flagi trasa /admin mogłaby przedwcześnie zdecydować "brak dostępu"
+		// i przekierować, zanim zdążymy w ogóle sprawdzić prawdziwą sesję/rolę.
+		authLoading: true
 	}
 	authSubscription = null
 
@@ -76,13 +82,13 @@ export class App extends Component {
 		// bez tego state.user zawsze resetowałby się do null przy przeładowaniu, mimo
 		// że użytkownik w rzeczywistości nadal jest zalogowany.
 		supabase.auth.getSession().then(({ data }) => {
-			this.setState({ user: data.session?.user ?? null })
+			this.loadUserWithRole(data.session?.user ?? null)
 		})
 
 		// Trzyma state.user w synchronizacji przy logowaniu, wylogowaniu (także z Account.jsx)
 		// i odświeżeniu tokenu — jedno źródło prawdy zamiast ręcznego ustawiania w kilku miejscach.
 		const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-			this.setState({ user: session?.user ?? null })
+			this.loadUserWithRole(session?.user ?? null)
 		})
 		this.authSubscription = listener.subscription
 	}
@@ -91,15 +97,45 @@ export class App extends Component {
 		this.authSubscription?.unsubscribe()
 	}
 
+	// Dociąga role z profiles i dopiero wtedy zapisuje usera w state — dzięki temu
+	// Header i Admin mają dostęp do user.role od razu, bez dodatkowego zapytania
+	// w każdym komponencie z osobna. Ustawianie roli tutaj jest tylko wygodą UI:
+	// prawdziwe zabezpieczenie zapisu do bazy pilnuje RLS po stronie Supabase,
+	// więc nawet gdyby ktoś podmienił user.role w devtools, i tak nic nie zapisze.
+	loadUserWithRole = async (sessionUser) => {
+		if (!sessionUser) {
+			this.setState({ user: null, authLoading: false })
+			return
+		}
+
+		const { data, error } = await supabase
+			.from('profiles')
+			.select('role')
+			.eq('id', sessionUser.id)
+			.single()
+
+		if (error) {
+			console.error('Nie udało się pobrać roli użytkownika:', error)
+		}
+
+		this.setState({
+			user: { ...sessionUser, role: data?.role ?? 'customer' },
+			authLoading: false
+		})
+	}
+
 	openAuth = () => this.setState({ authOpen: true })
   closeAuth = () => this.setState({ authOpen: false })
-  handleAuthSuccess = (user) => this.setState({ user, authOpen: false })
+  handleAuthSuccess = (user) => {
+		this.setState({ authOpen: false })
+		this.loadUserWithRole(user)
+	}
 	render() {
 		return (
 			<>
 				<Header onAccountClick={this.openAuth} user={this.state.user}/>
 				<BrandStrip/>
-				<AppRoutes/>
+				<AppRoutes user={this.state.user} authLoading={this.state.authLoading}/>
 				<Footer/>
 				<AuthModal
           isOpen={this.state.authOpen}

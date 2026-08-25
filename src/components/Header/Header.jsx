@@ -8,7 +8,7 @@ import css from './Header.module.css'
 //? imports components
 import { FaHeart } from 'react-icons/fa'
 import { FaUser } from 'react-icons/fa'
-import { FaCartShopping } from 'react-icons/fa6'
+import { FaCartShopping, FaGear } from 'react-icons/fa6'
 import CategoryNav from './CategoryNav.jsx'
 
 export class Header extends Component {
@@ -37,6 +37,10 @@ export class Header extends Component {
 
 		//! [2] Блок обчислювальних дaних
 		const { showTitle, menuOpen } = this.state
+		// Panel admina widoczny tylko w UI dla role === 'admin' — to jest
+		// kosmetyka/wygoda, nie zabezpieczenie: prawdziwy zamek na zapis
+		// do products/product_sizes/storage pilnuje RLS w Supabase.
+		const isAdmin = this.props.user?.role === 'admin'
 		const navLinks = [
 			{ label: 'Główna', path: '/' },
 			{ label: 'Katalog', path: '/catalog' },
@@ -96,6 +100,16 @@ export class Header extends Component {
 									>
 										<FaUser />
 									</button>
+								)}
+								{isAdmin && (
+									<Link
+										to='/admin'
+										className={`${css.header__btn} ${css.header__btnDesktopOnly}`}
+										aria-label='Panel administratora'
+										title='Panel administratora'
+									>
+										<FaGear />
+									</Link>
 								)}
 								<Link
 									to='/cart'
@@ -158,6 +172,16 @@ export class Header extends Component {
 										<FaUser />
 										<span>Konto</span>
 									</button>
+								)}
+								{isAdmin && (
+									<Link
+										to='/admin'
+										className={css.mobile_actionLink}
+										onClick={this.closeMenu}
+									>
+										<FaGear />
+										<span>Panel admina</span>
+									</Link>
 								)}
 							</div>
 							<div className={css.navbar}>

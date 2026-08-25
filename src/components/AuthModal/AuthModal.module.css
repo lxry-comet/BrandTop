@@ -98,6 +98,21 @@
     font-weight: 500;
 }
 
+/* kontekstowy komunikat, np. "Zaloguj się, aby dodać produkt do koszyka" —
+   wywoływany z ProductPage.jsx / Cart.jsx jako props.notice */
+.notice {
+    background: rgba(255, 94, 0, 0.12);
+    border: 1px solid rgba(255, 94, 0, 0.4);
+    color: #ffb37a;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 11px 14px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
 /* tab switcher — te same reguły co .prof-tabs / .prof-tab w brandtop_modified_9.html */
 .tabs {
     display: flex;

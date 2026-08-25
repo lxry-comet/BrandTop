@@ -184,6 +184,12 @@
 	box-sizing: border-box;
 }
 
+.btnBuy:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
 .btnFav {
 	display: flex;
 	align-items: center;

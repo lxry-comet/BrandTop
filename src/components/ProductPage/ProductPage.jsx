@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient.js'
+import { addToCart } from '@/lib/favoritesCartService.js'
+import { AuthModal } from '@/components/AuthModal/AuthModal.jsx'
 import css from './ProductPage.module.css'
 
 const HEART_SVG = (
@@ -60,6 +62,8 @@ function buildSpecs(product) {
 	return specs
 }
 
+const ADD_TO_CART_NOTICE = 'Zaloguj się lub załóż konto, aby dodać produkt do koszyka.'
+
 class ProductPage extends Component {
 	state = {
 		product: null,
@@ -70,6 +74,9 @@ class ProductPage extends Component {
 		sizeWarning: false,
 		liked: false,
 		added: false,
+		addingToCart: false,
+		cartError: '',
+		authAlertOpen: false,
 	}
 
 	componentDidMount() {
@@ -114,7 +121,11 @@ class ProductPage extends Component {
 		this.setState((prev) => ({ liked: !prev.liked }))
 	}
 
-	handleAddToCart = () => {
+	// Sprawdza, czy klient jest zalogowany, zanim faktycznie zapisze coś w bazie.
+	// Jeśli nie — otwiera AuthModal ze stylizowanym komunikatem (props.notice) zamiast
+	// standardowego "Zaloguj się" i po udanym logowaniu/rejestracji sam ponawia dodanie
+	// do koszyka (handleAuthSuccess), więc klient nie musi klikać "Dodaj do koszyka" drugi raz.
+	handleAddToCart = async () => {
 		const { product, selectedSize } = this.state
 		const sizes = sortSizes(product?.product_sizes)
 
@@ -123,18 +134,39 @@ class ProductPage extends Component {
 			return
 		}
 
-		// TODO: підʼєднай сюди реальну логіку кошика з Cart.jsx (Context/localStorage/Supabase —
-		// залежно від того, як там зараз влаштоване збереження кошика). Поки що це заглушка,
-		// яка показує, що клік і вибір розміру відпрацьовують коректно для будь-якого товару.
-		console.log('addToCart', { id: product.id, size: selectedSize })
+		this.setState({ addingToCart: true, cartError: '' })
 
-		this.setState({ added: true })
-		setTimeout(() => this.setState({ added: false }), 1600)
+		const { data: { user } } = await supabase.auth.getUser()
+
+		if (!user) {
+			this.setState({ addingToCart: false, authAlertOpen: true })
+			return
+		}
+
+		try {
+			await addToCart(user.id, product.id, selectedSize, 1)
+			this.setState({ addingToCart: false, added: true })
+			setTimeout(() => this.setState({ added: false }), 1600)
+		} catch (error) {
+			this.setState({ addingToCart: false, cartError: error?.message || 'Nie udało się dodać produktu do koszyka.' })
+		}
+	}
+
+	closeAuthAlert = () => this.setState({ authAlertOpen: false })
+
+	// Po udanym zalogowaniu/rejestracji z alertu — od razu dokańcza przerwane dodanie do koszyka.
+	handleAuthSuccess = () => {
+		this.setState({ authAlertOpen: false }, () => {
+			this.handleAddToCart()
+		})
 	}
 
 	render() {
 		const { navigate } = this.props
-		const { product, loading, error, mainImageIndex, selectedSize, sizeWarning, liked, added } = this.state
+		const {
+			product, loading, error, mainImageIndex, selectedSize, sizeWarning, liked,
+			added, addingToCart, cartError, authAlertOpen,
+		} = this.state
 
 		if (loading) {
 			return (
@@ -195,9 +227,10 @@ class ProductPage extends Component {
 						</div>
 
 						<div className={css.galleryActions}>
-							<button className={css.btnBuy} onClick={this.handleAddToCart}>
-								{added ? 'Dodano' : 'Dodaj do koszyka'}
+							<button className={css.btnBuy} onClick={this.handleAddToCart} disabled={addingToCart}>
+								{added ? 'Dodano' : addingToCart ? 'Dodawanie...' : 'Dodaj do koszyka'}
 							</button>
+							{cartError && <div className={css.sizeWarning}>{cartError}</div>}
 							<button className={`${css.btnFav} ${liked ? css.liked : ''}`} onClick={this.handleToggleFav}>
 								<span className={css.favIconInline}>{HEART_SVG}</span> Ulubione
 							</button>
@@ -278,6 +311,13 @@ class ProductPage extends Component {
 						)}
 					</div>
 				</div>
+
+				<AuthModal
+					isOpen={authAlertOpen}
+					onClose={this.closeAuthAlert}
+					onAuthSuccess={this.handleAuthSuccess}
+					notice={ADD_TO_CART_NOTICE}
+				/>
 			</div>
 		)
 	}
