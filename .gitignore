@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Zmienne środowiskowe - nigdy nie commitować
+.env
+.env.*
+!.env.example
+supabase/.env
+supabase/.temp/

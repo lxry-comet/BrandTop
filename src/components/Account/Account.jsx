@@ -63,9 +63,12 @@ export class Account extends Component {
 	}
 
 	async loadAccount() {
-		const { data: { user } } = await supabase.auth.getUser()
+		// getUser() pyta serwer Supabase, nie tylko lokalny token — dzięki temu,
+		// jeśli konto zostało usunięte ręcznie w Supabase, tu to wykryjemy
+		// i przekierujemy na stronę główną zamiast pokazywać pusty/błędny widok.
+		const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-		if (!user) {
+		if (userError || !user) {
 			this.setState({ loading: false, user: null })
 			return
 		}
@@ -141,13 +144,25 @@ export class Account extends Component {
 
 		this.setState({ profileSaving: true, profileToast: '' })
 
-		const { error } = await supabase.from('profiles').update({
+		// WAŻNE: upsert (nie update) — jeśli wiersz w profiles dla tego usera
+		// jeszcze nie istnieje (np. dane profilu zostały ręcznie usunięte
+		// w Supabase, a auth.users nadal ma to konto), zwykły update() na
+		// nieistniejący wiersz NIE zwraca błędu, ale też nic nie zapisuje —
+		// stąd wrażenie "zmiany się nie zapisują" mimo braku komunikatu
+		// o błędzie. upsert tworzy wiersz, jeśli go nie ma, albo aktualizuje,
+		// jeśli już istnieje.
+		const { error } = await supabase.from('profiles').upsert({
+			id: user.id,
 			first_name: profile.firstName.trim(),
 			last_name: profile.lastName.trim(),
 			phone: profile.phone.trim() || null,
 			date_of_birth: profile.dateOfBirth || null,
 			gender: profile.gender || null
-		}).eq('id', user.id)
+		})
+
+		if (error) {
+			console.error('Nie udało się zapisać profilu:', error)
+		}
 
 		this.setState({
 			profileSaving: false,
@@ -186,6 +201,10 @@ export class Account extends Component {
 			: supabase.from('addresses').insert(payload).select().single()
 
 		const { data, error } = await query
+
+		if (error) {
+			console.error('Nie udało się zapisać adresu:', error)
+		}
 
 		this.setState({
 			addressSaving: false,

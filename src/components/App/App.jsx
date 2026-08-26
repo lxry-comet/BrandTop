@@ -70,7 +70,7 @@ export class App extends Component {
 	state = {
 		authOpen: false,
 		user: null,
-		// Dopóki true — sesja jeszcze się ładuje z Supabase (getSession jest async).
+		// Dopóki true — sesja jeszcze się ładuje z Supabase (getUser jest async).
 		// Bez tego flagi trasa /admin mogłaby przedwcześnie zdecydować "brak dostępu"
 		// i przekierować, zanim zdążymy w ogóle sprawdzić prawdziwą sesję/rolę.
 		authLoading: true
@@ -78,11 +78,25 @@ export class App extends Component {
 	authSubscription = null
 
 	componentDidMount() {
-		// Odtwarza sesję zapisaną przez Supabase (localStorage) po odświeżeniu strony —
-		// bez tego state.user zawsze resetowałby się do null przy przeładowaniu, mimo
-		// że użytkownik w rzeczywistości nadal jest zalogowany.
-		supabase.auth.getSession().then(({ data }) => {
-			this.loadUserWithRole(data.session?.user ?? null)
+		// WAŻNE: getUser() (nie getSession()) — getSession() tylko odczytuje token
+		// zapisany lokalnie w przeglądarce i NIE sprawdza z serwerem, czy ten
+		// użytkownik nadal istnieje. Jeśli konto zostało usunięte ręcznie w Supabase
+		// (Authentication → Users), stary token w localStorage nadal "wygląda"
+		// na ważny, więc Header pokazywałby link do /account, a dopiero tam
+		// dochodziłoby do realnego sprawdzenia i przekierowania z powrotem —
+		// czyli efekt, który wyglądał jak "strona się przeładowuje".
+		// getUser() pyta serwer od razu, więc możemy tu wykryć nieważną sesję
+		// i ją wyczyścić, zanim cokolwiek zdąży się wyrenderować.
+		supabase.auth.getUser().then(({ data, error }) => {
+			if (error) {
+				// Token wskazuje na użytkownika, który już nie istnieje (usunięty
+				// ręcznie w Supabase) albo sesja wygasła — czyścimy ją, żeby Header
+				// i inne komponenty nie myślały błędnie, że ktoś jest zalogowany.
+				supabase.auth.signOut()
+				this.loadUserWithRole(null)
+			} else {
+				this.loadUserWithRole(data.user)
+			}
 		})
 
 		// Trzyma state.user w synchronizacji przy logowaniu, wylogowaniu (także z Account.jsx)
@@ -108,11 +122,16 @@ export class App extends Component {
 			return
 		}
 
+		// WAŻNE: maybeSingle() (nie single()) — single() rzuca błąd PGRST116
+		// ("Cannot coerce the result to a single JSON object"), gdy w profiles
+		// nie ma jeszcze wiersza dla tego usera (np. świeżo utworzone konto,
+		// albo dane profilu zostały ręcznie usunięte w Supabase). maybeSingle()
+		// w takiej sytuacji po prostu zwraca null zamiast rzucać błąd.
 		const { data, error } = await supabase
 			.from('profiles')
 			.select('role')
 			.eq('id', sessionUser.id)
-			.single()
+			.maybeSingle()
 
 		if (error) {
 			console.error('Nie udało się pobrać roli użytkownika:', error)
