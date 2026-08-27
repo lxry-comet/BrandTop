@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <title>Brand-Top</title>
+  <script type="text/javascript">
+    // Standardowy trik dla SPA na GitHub Pages (spa-github-pages).
+    // GitHub Pages nie wie nic o trasach React Router (np. /product/obuwie_108) —
+    // szuka fizycznego pliku o takiej nazwie i nie znajduje, więc serwuje ten plik
+    // 404.html. Zamiast pokazywać błąd, ten skrypt przepakowuje adres na parametr
+    // zapytania i przekierowuje na index.html — tam mały skrypt (dodany w index.html)
+    // odczytuje ten parametr i przywraca właściwy adres, zanim React Router
+    // zdąży cokolwiek wyrenderować.
+    //
+    // WAŻNE: pathSegmentsToKeep = 1, bo strona jest pod podścieżką /BrandTop/
+    // (GitHub Pages Project Site, nie własna domena) — ten segment trzeba
+    // zachować przy przebudowie adresu. Jeśli kiedyś przeniesiesz się na własną
+    // domenę (bez /BrandTop/ w adresie), zmień tę wartość na 0.
+    var pathSegmentsToKeep = 1;
+
+    var l = window.location;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+      l.hash
+    );
+  </script>
+</head>
+<body>
+</body>
+</html>
