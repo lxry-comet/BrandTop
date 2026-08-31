@@ -86,7 +86,7 @@ Deno.serve(async (req) => {
       .from("orders")
       .insert({
         user_id: metadata.user_id,
-        status: "opłacone",
+        status: "paid",
         total: totalAmount,
         stripe_session_id: session.id,
         payment_method: paymentMethod,
