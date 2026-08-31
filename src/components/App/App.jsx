@@ -21,16 +21,18 @@ import {Collections} from '@/components/Collections/Collections.jsx'
 import {Bestsellers} from '@/components/Bestsellers/Bestsellers.jsx'
 import {Newproducts} from '@/components/Newproducts/Newproducts.jsx'
 import {Contacts} from '@/components/Contacts/Contacts.jsx'
-import {Catalog} from '@/components/Catalog/Catalog.jsx'
+import {Catalog} from '@/components/Checkout/Catalog/Catalog.jsx'
+import CheckoutSuccess from '@/components/CheckoutSuccess/CheckoutSuccess.jsx'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import {Wideo} from '@/components/Wideo/Wideo.jsx'
-import {Cart} from '@/components/Cart/Cart.jsx'
+import CartWithNavigate from '@/components/Cart/CartWithNavigate.jsx'
 import {Favorites} from '@/components/Favorites/Favorites.jsx'
 import {AuthModal} from '@/components/AuthModal/AuthModal.jsx'
 import {Account} from '@/components/Account/Account.jsx'
 import {ProductPageRoute} from '@/components/ProductPage/ProductPage.jsx'
 import {Admin} from '@/components/Admin/Admin.jsx'
 import { supabase } from '@/lib/supabaseClient'
+import CheckoutWithNavigate from '@/components/Checkout/CheckoutWithNavigate.jsx'
 
 function HomePage() {
 	return (
@@ -58,7 +60,9 @@ function AppRoutes({ user, authLoading }) {
 			{/* <Route path='/bestsellers' element={<Bestsellers/>}/> */}
 			{/* <Route path='/newproducts' element={<Newproducts/>}/> */}
 			<Route path='/wideo' element={<Wideo/>}/>
-			<Route path='/cart' element={<Cart/>}/>
+			<Route path='/cart' element={<CartWithNavigate/>}/>
+			<Route path='/checkout' element={<CheckoutWithNavigate/>}/>
+			<Route path='/checkout/sukces' element={<CheckoutSuccess/>}/>
 			<Route path='/favorites' element={<Favorites/>}/>
 			<Route path='/contact' element={<Contacts/>}/>
 			<Route path='/admin' element={<Admin user={user} authLoading={authLoading}/>}/>

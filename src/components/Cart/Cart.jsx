@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 import { supabase } from '@/lib/supabaseClient.js'
-import { getCart, updateCartItemQuantity, removeCartItem, completeOrder } from '@/lib/favoritesCartService.js'
+import { getCart, updateCartItemQuantity, removeCartItem } from '@/lib/favoritesCartService.js'
 import { AuthModal } from '@/components/AuthModal/AuthModal.jsx'
 import css from './Cart.module.css'
 
@@ -23,8 +23,6 @@ export class Cart extends Component {
 		loading: false,
 		cartItems: [],
 		error: '',
-		completing: false,
-		orderSuccess: null,
 		authAlertOpen: false,
 	}
 
@@ -94,18 +92,14 @@ export class Cart extends Component {
 		}
 	}
 
-	handleCompleteOrder = async () => {
-		const { user, cartItems } = this.state
-		if (!user || !cartItems.length) return
-
-		this.setState({ completing: true, error: '' })
-
-		try {
-			const order = await completeOrder(user.id, cartItems)
-			this.setState({ completing: false, cartItems: [], orderSuccess: order })
-		} catch (error) {
-			this.setState({ completing: false, error: error?.message || 'Nie udało się złożyć zamówienia.' })
-		}
+	// WAŻNE: zamówienie nie jest już tworzone tutaj bezpośrednio. Cart.jsx tylko
+	// przekierowuje do /checkout — tam wybierany jest adres i metoda dostawy,
+	// a samo zamówienie (orders/order_items) zapisuje dopiero webhook Stripe
+	// PO realnym opłaceniu (patrz stripe-webhook/index.ts). Dzięki temu nie da
+	// się "złożyć zamówienia" bez faktycznej płatności.
+	handleGoToCheckout = () => {
+		if (!this.state.cartItems.length) return
+		this.props.navigate('/checkout')
 	}
 
 	openAuthAlert = () => this.setState({ authAlertOpen: true })
@@ -129,8 +123,7 @@ export class Cart extends Component {
 
 	render() {
 		const {
-			user, checkingUser, loading, cartItems, error,
-			completing, orderSuccess, authAlertOpen,
+			user, checkingUser, loading, cartItems, error, authAlertOpen,
 		} = this.state
 
 		if (checkingUser) {
@@ -159,24 +152,6 @@ export class Cart extends Component {
 						onAuthSuccess={this.handleAuthSuccess}
 						notice={LOGIN_NOTICE}
 					/>
-				</div>
-			)
-		}
-
-		if (orderSuccess) {
-			return (
-				<div className={css.content}>
-					{this.renderHeader()}
-					<div className={css.successCard}>
-						<div className={css.successTitle}>Zamówienie złożone!</div>
-						<p className={css.successText}>
-							Numer zamówienia #{orderSuccess.id} na kwotę {orderSuccess.total} zł. Dziękujemy za zakupy!
-						</p>
-						<div className={css.successActions}>
-							<Link to="/catalog" className={css.loginBtn}>Wróć do zakupów</Link>
-							<Link to="/account" className={css.back_btn}>Moje zamówienia</Link>
-						</div>
-					</div>
 				</div>
 			)
 		}
@@ -230,8 +205,8 @@ export class Cart extends Component {
 						})}
 
 						<div className={css.cart_total}>Razem: {this.getTotal()} zł</div>
-						<button className={css.btn_buy} onClick={this.handleCompleteOrder} disabled={completing}>
-							{completing ? 'Składanie zamówienia...' : 'Kup teraz'}
+						<button className={css.btn_buy} onClick={this.handleGoToCheckout}>
+							Przejdź do kasy
 						</button>
 					</>
 				)}
