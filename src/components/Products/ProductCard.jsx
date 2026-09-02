@@ -4,8 +4,7 @@ import css from './Products.module.css'
 
 class ProductCard extends Component {
 	state = {
-		currentImg: 0,
-		liked: false
+		currentImg: 0
 	}
 
 	getGallery = () => {
@@ -34,9 +33,13 @@ class ProductCard extends Component {
 		this.setState({ currentImg: index })
 	}
 
+	// Serce teraz nie ma własnego lokalnego stanu — status "ulubione" przychodzi
+	// z ProductsGrid (props.isFavorite), a klik tylko wywołuje przekazany handler,
+	// który zapisuje/usuwa wpis w tabeli favorites w Supabase.
 	handleToggleFav = (e) => {
 		e.stopPropagation()
-		this.setState(prev => ({ liked: !prev.liked }))
+		const { product, onToggleFavorite } = this.props
+		if (onToggleFavorite) onToggleFavorite(product)
 	}
 
 	handleCardClick = () => {
@@ -45,8 +48,8 @@ class ProductCard extends Component {
 	}
 
 	render() {
-		const { product } = this.props
-		const { currentImg, liked } = this.state
+		const { product, isFavorite } = this.props
+		const { currentImg } = this.state
 		const gallery = this.getGallery()
 		const hasMultiple = gallery.length > 1
 
@@ -91,8 +94,10 @@ class ProductCard extends Component {
 						)}
 
 						<span
-							className={`${css.favIcon} ${liked ? css.liked : ''}`}
+							className={`${css.favIcon} ${isFavorite ? css.liked : ''}`}
 							onClick={this.handleToggleFav}
+							role="button"
+							aria-label={isFavorite ? 'Usuń z ulubionych' : 'Dodaj do ulubionych'}
 						>
 							<svg className={css.heartSvg} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 								<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
