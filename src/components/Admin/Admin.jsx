@@ -52,7 +52,7 @@ function withNavigate(WrappedComponent) {
 
 class AdminBase extends Component {
 	state = {
-		activeTab: 'products', // 'products' | 'admins'
+		activeTab: 'products', // 'products' | 'orders' | 'admins'
 		view: 'list', // 'list' | 'form' (tylko w zakładce products)
 
 		// --- Produkty ---
@@ -67,6 +67,14 @@ class AdminBase extends Component {
 		search: '',
 		filterType: 'all',
 		filterStatus: 'all',
+
+		// --- Zamówienia ---
+		orders: [],
+		loadingOrders: false,
+		orderFilterStatus: 'all',
+		orderActionLoadingId: null,
+		orderActionError: null,
+		trackingInputs: {}, // { [orderId]: string } — wpisywany numer przesyłki przed "Oznacz jako wysłane"
 
 		// --- Administratorzy ---
 		admins: [],
@@ -110,6 +118,7 @@ class AdminBase extends Component {
 	switchTab = (tab) => {
 		this.setState({ activeTab: tab })
 		if (tab === 'admins') this.fetchAdmins()
+		if (tab === 'orders') this.fetchOrders()
 	}
 
 	// =====================================================================
@@ -277,6 +286,70 @@ class AdminBase extends Component {
 		}
 
 		this.fetchProducts()
+	}
+
+	// =====================================================================
+	// ZAMÓWIENIA
+	// =====================================================================
+
+	// order_items(*, products(name)) — dociąga nazwę produktu do każdej pozycji,
+	// żeby nie pokazywać samego SKU w widoku admina.
+	fetchOrders = async () => {
+		this.setState({ loadingOrders: true })
+		const { data, error } = await supabase
+			.from('orders')
+			.select('*, order_items(*, products(name))')
+			.order('created_at', { ascending: false })
+
+		if (error) console.error('Błąd pobierania zamówień:', error)
+		this.setState({ orders: data || [], loadingOrders: false })
+	}
+
+	getFilteredOrders = () => {
+		const { orders, orderFilterStatus } = this.state
+		if (orderFilterStatus === 'all') return orders
+		return orders.filter(o => o.status === orderFilterStatus)
+	}
+
+	setTrackingInput = (orderId, value) => {
+		this.setState(prev => ({
+			trackingInputs: { ...prev.trackingInputs, [orderId]: value }
+		}))
+	}
+
+	// Jedna metoda dla wszystkich przejść statusu — woła Edge Function, bo tylko
+	// tam (service_role) można bezpiecznie odczytać e-mail klienta z auth.users
+	// i wysłać mu powiadomienie. Zwykły supabase.from('orders').update(...) by
+	// zmienił status, ale nie miałby jak wysłać maila.
+	changeOrderStatus = async (order, newStatus) => {
+		const trackingNumber = newStatus === 'shipped'
+			? (this.state.trackingInputs[order.id] || '').trim()
+			: undefined
+
+		if (newStatus === 'shipped' && !trackingNumber) {
+			if (!window.confirm('Nie podano numeru przesyłki. Oznaczyć jako wysłane mimo to?')) return
+		}
+
+		this.setState({ orderActionLoadingId: order.id, orderActionError: null })
+
+		try {
+			const { data: { session } } = await supabase.auth.getSession()
+			const { data, error } = await supabase.functions.invoke('update-order-status', {
+				body: { orderId: order.id, newStatus, trackingNumber },
+				headers: { Authorization: `Bearer ${session.access_token}` }
+			})
+
+			if (error || data?.error) {
+				throw new Error(data?.error || error?.message || 'Nieznany błąd.')
+			}
+
+			await this.fetchOrders()
+		} catch (err) {
+			console.error('Błąd zmiany statusu zamówienia:', err)
+			this.setState({ orderActionError: err.message })
+		} finally {
+			this.setState({ orderActionLoadingId: null })
+		}
 	}
 
 	// =====================================================================
@@ -512,6 +585,163 @@ class AdminBase extends Component {
 	}
 
 	// =====================================================================
+	// RENDER — zamówienia
+	// =====================================================================
+
+	renderOrders() {
+		const {
+			loadingOrders, orderFilterStatus, orderActionLoadingId,
+			orderActionError, trackingInputs
+		} = this.state
+		const filtered = this.getFilteredOrders()
+
+		const STATUS_LABELS = {
+			pending: 'Oczekujące',
+			paid: 'Opłacone',
+			processing: 'Przyjęte do realizacji',
+			shipped: 'Wysłane',
+			completed: 'Zrealizowane',
+			cancelled: 'Anulowane'
+		}
+
+		return (
+			<>
+				<div className={css.toolbar}>
+					<h1 className={css.admin__title}>Zamówienia</h1>
+				</div>
+
+				<div className={css.filterBar}>
+					<select
+						value={orderFilterStatus}
+						onChange={(e) => this.setState({ orderFilterStatus: e.target.value })}
+					>
+						<option value='all'>Wszystkie statusy</option>
+						{Object.entries(STATUS_LABELS).map(([value, label]) => (
+							<option key={value} value={value}>{label}</option>
+						))}
+					</select>
+					<span className={css.resultsCount}>{filtered.length} z {this.state.orders.length}</span>
+				</div>
+
+				{orderActionError && <p className={css.errorText}>Błąd: {orderActionError}</p>}
+
+				{loadingOrders ? (
+					<p className={css.muted}>Ładowanie…</p>
+				) : (
+					<div className={css.tableWrap}>
+						<table className={css.table}>
+							<thead>
+								<tr>
+									<th>Zamówienie</th>
+									<th>Produkty</th>
+									<th>Kwota</th>
+									<th>Dostawa</th>
+									<th>Status</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								{filtered.map(order => {
+									const items = order.order_items || []
+									const isLoading = orderActionLoadingId === order.id
+									const canProcess = order.status === 'paid'
+									const canShip = order.status === 'processing' || order.status === 'paid'
+									const canCancel = order.status === 'paid' || order.status === 'processing'
+
+									return (
+										<tr key={order.id}>
+											<td>
+												<div style={{ fontWeight: 700 }}>#{order.id}</div>
+												<div className={css.muted} style={{ fontSize: 12 }}>
+													{new Date(order.created_at).toLocaleDateString('pl-PL')}
+												</div>
+											</td>
+											<td style={{ fontSize: 13 }}>
+												{items.map(item => (
+													<div key={item.id}>
+														{item.products?.name || item.product_id} × {item.quantity}
+														{item.size ? ` (rozm. ${item.size})` : ''}
+													</div>
+												))}
+											</td>
+											<td>{Number(order.total).toFixed(2)} zł</td>
+											<td style={{ fontSize: 13 }}>
+												{order.shipping_method || '—'}
+												{order.tracking_number && (
+													<div className={css.muted}>nr: {order.tracking_number}</div>
+												)}
+											</td>
+											<td>
+												<span className={css.badge}>
+													{STATUS_LABELS[order.status] || order.status}
+												</span>
+											</td>
+											<td className={css.actionsCell} style={{ flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+												{canProcess && (
+													<button
+														type='button'
+														className={css.btnGhost}
+														disabled={isLoading}
+														onClick={() => this.changeOrderStatus(order, 'processing')}
+													>
+														Przyjmij zamówienie
+													</button>
+												)}
+												{canShip && (
+													<div style={{ display: 'flex', gap: 6 }}>
+														<input
+															type='text'
+															placeholder='Numer przesyłki'
+															value={trackingInputs[order.id] || ''}
+															onChange={(e) => this.setTrackingInput(order.id, e.target.value)}
+															style={{
+																background: 'rgba(0,0,0,0.3)',
+																border: '1px solid rgba(255,255,255,0.14)',
+																borderRadius: 8,
+																padding: '6px 10px',
+																color: '#fff',
+																fontSize: 12,
+																width: 130
+															}}
+														/>
+														<button
+															type='button'
+															className={css.btnPrimary}
+															disabled={isLoading}
+															onClick={() => this.changeOrderStatus(order, 'shipped')}
+														>
+															Wysłano
+														</button>
+													</div>
+												)}
+												{canCancel && (
+													<button
+														type='button'
+														className={css.btnDanger}
+														disabled={isLoading}
+														onClick={() => this.changeOrderStatus(order, 'cancelled')}
+													>
+														Anuluj
+													</button>
+												)}
+											</td>
+										</tr>
+									)
+								})}
+								{filtered.length === 0 && (
+									<tr>
+										<td colSpan={6} className={css.muted}>Brak zamówień spełniających kryteria.</td>
+									</tr>
+								)}
+							</tbody>
+						</table>
+					</div>
+				)}
+			</>
+		)
+	}
+
+	// =====================================================================
 	// RENDER — administratorzy
 	// =====================================================================
 
@@ -605,6 +835,13 @@ class AdminBase extends Component {
 					</button>
 					<button
 						type='button'
+						className={`${css.tab} ${activeTab === 'orders' ? css.tabActive : ''}`}
+						onClick={() => this.switchTab('orders')}
+					>
+						Zamówienia
+					</button>
+					<button
+						type='button'
 						className={`${css.tab} ${activeTab === 'admins' ? css.tabActive : ''}`}
 						onClick={() => this.switchTab('admins')}
 					>
@@ -612,9 +849,9 @@ class AdminBase extends Component {
 					</button>
 				</div>
 
-				{activeTab === 'products'
-					? (view === 'list' ? this.renderList() : this.renderForm())
-					: this.renderAdmins()}
+				{activeTab === 'products' && (view === 'list' ? this.renderList() : this.renderForm())}
+				{activeTab === 'orders' && this.renderOrders()}
+				{activeTab === 'admins' && this.renderAdmins()}
 			</div>
 		)
 	}
