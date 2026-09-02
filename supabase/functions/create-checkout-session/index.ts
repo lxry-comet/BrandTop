@@ -39,9 +39,10 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { shippingMethodId, items } = body as {
+    const { shippingMethodId, items, cartItemIds } = body as {
       shippingMethodId: string;
       items: { productId: string; size: number; quantity: number }[];
+      cartItemIds?: number[];
     };
 
     if (!items?.length) {
@@ -153,6 +154,7 @@ Deno.serve(async (req) => {
         shipping_method_id: shippingMethod.id,
         address_id: address.id,
         order_items: JSON.stringify(orderItemsDraft),
+        cart_item_ids: JSON.stringify(cartItemIds || []),
       },
     });
 

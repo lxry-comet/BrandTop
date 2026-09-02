@@ -104,6 +104,40 @@
 	transform: translateY(-2px);
 }
 
+.itemRow {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 0;
+	cursor: pointer;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.itemRow:last-child {
+	border-bottom: none;
+}
+
+.itemRow input[type='checkbox'] {
+	width: 18px;
+	height: 18px;
+	accent-color: #ff5e00;
+	cursor: pointer;
+	flex-shrink: 0;
+}
+
+.itemName {
+	flex: 1;
+	font-size: 14px;
+	color: #ffffff;
+}
+
+.itemPrice {
+	font-size: 14px;
+	font-weight: 700;
+	color: #ffffff;
+	white-space: nowrap;
+}
+
 .shippingOption {
 	display: flex;
 	align-items: center;

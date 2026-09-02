@@ -18,6 +18,7 @@ class Checkout extends React.Component {
     shippingMethods: [],
     selectedShippingId: null,
     cartItems: [],
+    selectedCartItemIds: [], // które pozycje koszyka klient chce faktycznie zamówić
   };
 
   async componentDidMount() {
@@ -48,6 +49,7 @@ class Checkout extends React.Component {
         shippingMethods: shippingMethods || [],
         selectedShippingId: shippingMethods?.[0]?.id ?? null,
         cartItems: cartItems || [],
+        selectedCartItemIds: (cartItems || []).map((i) => i.id), // domyślnie: cały koszyk
         loading: false,
       });
     } catch (err) {
@@ -65,9 +67,31 @@ class Checkout extends React.Component {
     this.setState({ selectedShippingId: id });
   };
 
+  toggleCartItem = (itemId) => {
+    this.setState((prev) => {
+      const isSelected = prev.selectedCartItemIds.includes(itemId);
+      return {
+        selectedCartItemIds: isSelected
+          ? prev.selectedCartItemIds.filter((id) => id !== itemId)
+          : [...prev.selectedCartItemIds, itemId],
+      };
+    });
+  };
+
+  getSelectedItems = () => {
+    const { cartItems, selectedCartItemIds } = this.state;
+    return cartItems.filter((i) => selectedCartItemIds.includes(i.id));
+  };
+
   handlePay = async () => {
     if (!this.isAddressComplete()) {
       this.props.navigate("/account?tab=adres");
+      return;
+    }
+
+    const selectedItems = this.getSelectedItems();
+    if (!selectedItems.length) {
+      this.setState({ error: "Wybierz przynajmniej jeden produkt do zamówienia." });
       return;
     }
 
@@ -79,11 +103,15 @@ class Checkout extends React.Component {
       const { data, error } = await supabase.functions.invoke("create-checkout-session", {
         body: {
           shippingMethodId: this.state.selectedShippingId,
-          items: this.state.cartItems.map((i) => ({
+          items: selectedItems.map((i) => ({
             productId: i.product?.id,
             size: i.size,
             quantity: i.quantity,
           })),
+          // ID wierszy w cart_items — webhook usunie je z koszyka DOPIERO po
+          // potwierdzonej płatności, żeby nieudana/porzucona płatność nie
+          // czyściła koszyka na pusto.
+          cartItemIds: selectedItems.map((i) => i.id),
         },
         headers: { Authorization: `Bearer ${session.access_token}` },
       });
@@ -104,15 +132,18 @@ class Checkout extends React.Component {
   };
 
   render() {
-    const { loading, submitting, error, address, shippingMethods, selectedShippingId, cartItems } =
-      this.state;
+    const {
+      loading, submitting, error, address, shippingMethods,
+      selectedShippingId, cartItems, selectedCartItemIds,
+    } = this.state;
 
     if (loading) return <div className={css.loading}>Ładowanie…</div>;
 
     const addressOk = this.isAddressComplete();
     const shippingPrice =
       shippingMethods.find((m) => m.id === selectedShippingId)?.price ?? 0;
-    const itemsTotal = cartItems.reduce(
+    const selectedItems = this.getSelectedItems();
+    const itemsTotal = selectedItems.reduce(
       (sum, i) => sum + Number(i.product?.price_pln || 0) * (i.quantity || 1),
       0
     );
@@ -120,6 +151,32 @@ class Checkout extends React.Component {
     return (
       <div className={css.checkout}>
         <h1 className={css.title}>Podsumowanie zamówienia</h1>
+
+        <section className={css.section}>
+          <h2>Produkty do zamówienia</h2>
+          {cartItems.map((item) => {
+            const checked = selectedCartItemIds.includes(item.id);
+            return (
+              <label key={item.id} className={css.itemRow}>
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={() => this.toggleCartItem(item.id)}
+                />
+                <span className={css.itemName}>
+                  {item.product?.name || "Produkt"}
+                  {item.size ? ` (rozm. ${item.size})` : ""} × {item.quantity}
+                </span>
+                <span className={css.itemPrice}>
+                  {(Number(item.product?.price_pln || 0) * (item.quantity || 1)).toFixed(2)} zł
+                </span>
+              </label>
+            );
+          })}
+          {cartItems.length === 0 && (
+            <p className={css.paymentNote}>Koszyk jest pusty.</p>
+          )}
+        </section>
 
         <section className={css.section}>
           <h2>Adres dostawy</h2>
@@ -166,7 +223,7 @@ class Checkout extends React.Component {
         </section>
 
         <div className={css.summary}>
-          <div>Produkty: {itemsTotal.toFixed(2)} zł</div>
+          <div>Produkty ({selectedItems.length}): {itemsTotal.toFixed(2)} zł</div>
           <div>Dostawa: {shippingPrice.toFixed(2)} zł</div>
           <div className={css.summaryTotal}>
             Razem: {(itemsTotal + shippingPrice).toFixed(2)} zł
@@ -177,7 +234,7 @@ class Checkout extends React.Component {
 
         <button
           className={css.payButton}
-          disabled={submitting || !addressOk || cartItems.length === 0}
+          disabled={submitting || !addressOk || selectedItems.length === 0}
           onClick={this.handlePay}
         >
           {submitting ? "Przekierowanie…" : "Zapłać"}

@@ -120,6 +120,28 @@ Deno.serve(async (req) => {
       });
     }
 
+    // 2b) Usunięcie z koszyka TYLKO tych pozycji, które faktycznie zamówiono —
+    // klient mógł zaznaczyć na /checkout tylko część produktów z koszyka
+    // (patrz Checkout.jsx: selectedCartItemIds), reszta ma zostać w koszyku.
+    // Robimy to dopiero TERAZ (po potwierdzonej płatności), a nie w momencie
+    // kliknięcia "Zapłać" — inaczej porzucona/nieudana płatność czyściłaby
+    // koszyk bez faktycznego zamówienia.
+    const cartItemIds = JSON.parse(metadata.cart_item_ids || "[]") as number[];
+    if (cartItemIds.length) {
+      const { error: cartDeleteError } = await supabase
+        .from("cart_items")
+        .delete()
+        .in("id", cartItemIds)
+        .eq("user_id", metadata.user_id); // dodatkowe zabezpieczenie — tylko własne pozycje
+
+      if (cartDeleteError) {
+        console.error("Nie udało się wyczyścić koszyka:", cartDeleteError);
+        // Nieudane czyszczenie koszyka nie powinno cofać już zapisanego
+        // zamówienia ani blokować maili — klient po prostu zobaczy kupiony
+        // produkt nadal w koszyku i będzie mógł go ręcznie usunąć.
+      }
+    }
+
     // 3) Mail do osoby zarządzającej wysyłką (SendGrid)
     await sendShippingEmail(order, address, shippingMethod, orderItems);
 
