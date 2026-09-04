@@ -19,6 +19,7 @@ class Checkout extends React.Component {
     selectedShippingId: null,
     cartItems: [],
     selectedCartItemIds: [], // które pozycje koszyka klient chce faktycznie zamówić
+    outOfStockItem: null, // { productId, size } — pozycja, którą backend odrzucił jako niedostępną
   };
 
   async componentDidMount() {
@@ -78,6 +79,18 @@ class Checkout extends React.Component {
     });
   };
 
+  // Wywoływane z przycisku "Usuń z zamówienia" przy pozycji, którą backend
+  // odrzucił jako niedostępną (OUT_OF_STOCK) — po prostu odznacza ją z
+  // bieżącego zamówienia (zostaje w koszyku na później) i czyści błąd,
+  // żeby klient mógł od razu spróbować zapłacić za resztę bez tego produktu.
+  handleRemoveOutOfStockItem = (itemId) => {
+    this.setState((prev) => ({
+      selectedCartItemIds: prev.selectedCartItemIds.filter((id) => id !== itemId),
+      error: null,
+      outOfStockItem: null,
+    }));
+  };
+
   getSelectedItems = () => {
     const { cartItems, selectedCartItemIds } = this.state;
     return cartItems.filter((i) => selectedCartItemIds.includes(i.id));
@@ -119,6 +132,14 @@ class Checkout extends React.Component {
       if (error || data?.error) {
         this.setState({
           error: data?.error || "Nie udało się rozpocząć płatności.",
+          // Jeśli backend zwrócił strukturalny błąd braku stanu (kod OUT_OF_STOCK
+          // z productId/size) — zapamiętujemy, żeby podświetlić dokładnie tę
+          // pozycję na liście i dać klientowi jedno kliknięcie "Usuń", zamiast
+          // zostawiać go z samym tekstem błędu i koniecznością zgadywania,
+          // o który produkt chodzi.
+          outOfStockItem: data?.code === "OUT_OF_STOCK"
+            ? { productId: data.productId, size: data.size }
+            : null,
           submitting: false,
         });
         return;
@@ -134,7 +155,7 @@ class Checkout extends React.Component {
   render() {
     const {
       loading, submitting, error, address, shippingMethods,
-      selectedShippingId, cartItems, selectedCartItemIds,
+      selectedShippingId, cartItems, selectedCartItemIds, outOfStockItem,
     } = this.state;
 
     if (loading) return <div className={css.loading}>Ładowanie…</div>;
@@ -156,21 +177,39 @@ class Checkout extends React.Component {
           <h2>Produkty do zamówienia</h2>
           {cartItems.map((item) => {
             const checked = selectedCartItemIds.includes(item.id);
+            const isOutOfStock =
+              outOfStockItem &&
+              outOfStockItem.productId === item.product?.id &&
+              outOfStockItem.size === item.size;
             return (
-              <label key={item.id} className={css.itemRow}>
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={() => this.toggleCartItem(item.id)}
-                />
-                <span className={css.itemName}>
-                  {item.product?.name || "Produkt"}
-                  {item.size ? ` (rozm. ${item.size})` : ""} × {item.quantity}
-                </span>
-                <span className={css.itemPrice}>
-                  {(Number(item.product?.price_pln || 0) * (item.quantity || 1)).toFixed(2)} zł
-                </span>
-              </label>
+              <div key={item.id}>
+                <label className={`${css.itemRow}${isOutOfStock ? ` ${css.itemRowError}` : ""}`}>
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={() => this.toggleCartItem(item.id)}
+                  />
+                  <span className={css.itemName}>
+                    {item.product?.name || "Produkt"}
+                    {item.size ? ` (rozm. ${item.size})` : ""} × {item.quantity}
+                  </span>
+                  <span className={css.itemPrice}>
+                    {(Number(item.product?.price_pln || 0) * (item.quantity || 1)).toFixed(2)} zł
+                  </span>
+                </label>
+                {isOutOfStock && (
+                  <div className={css.outOfStockNotice}>
+                    <span>Ten produkt właśnie skończył się w magazynie.</span>
+                    <button
+                      type="button"
+                      className={css.linkButton}
+                      onClick={() => this.handleRemoveOutOfStockItem(item.id)}
+                    >
+                      Usuń z zamówienia
+                    </button>
+                  </div>
+                )}
+              </div>
             );
           })}
           {cartItems.length === 0 && (
@@ -230,7 +269,7 @@ class Checkout extends React.Component {
           </div>
         </div>
 
-        {error && <p className={css.error}>{error}</p>}
+        {error && !outOfStockItem && <p className={css.error}>{error}</p>}
 
         <button
           className={css.payButton}

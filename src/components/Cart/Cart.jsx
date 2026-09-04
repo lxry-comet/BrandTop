@@ -140,6 +140,14 @@ export class Cart extends Component {
 				<div className={css.content}>
 					{this.renderHeader()}
 					<div className={css.loginCard}>
+						<div className={css.loginIconBadge}>
+							<svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M6 6h15l-1.5 9h-12L6 6Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+								<path d="M6 6 5 3H2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+								<circle cx="9.5" cy="19.5" r="1.5" fill="currentColor"/>
+								<circle cx="17.5" cy="19.5" r="1.5" fill="currentColor"/>
+							</svg>
+						</div>
 						<div className={css.loginTitle}>Zaloguj się, aby zobaczyć koszyk</div>
 						<p className={css.loginText}>{LOGIN_NOTICE}</p>
 						<button className={css.loginBtn} onClick={this.openAuthAlert}>

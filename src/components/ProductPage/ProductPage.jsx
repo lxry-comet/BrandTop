@@ -138,7 +138,7 @@ class ProductPage extends Component {
 	}
 
 	handleSelectSize = (sizeEntry) => {
-		if (sizeEntry.stock === 0) return
+		if (!sizeEntry.stock) return
 		this.setState({ selectedSize: sizeEntry.size, sizeWarning: false })
 	}
 
@@ -320,7 +320,7 @@ class ProductPage extends Component {
 											className={[
 												css.sizeOption,
 												selectedSize === s.size ? css.sizeSelected : '',
-												s.stock === 0 ? css.sizeDisabled : '',
+												s.stock ? '' : css.sizeDisabled,
 											].join(' ')}
 											onClick={() => this.handleSelectSize(s)}
 										>

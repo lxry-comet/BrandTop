@@ -112,14 +112,24 @@ Deno.serve(async (req) => {
 
         if (sizeError || !sizeRow || sizeRow.stock < item.quantity) {
           return json(
-            { error: `Brak wystarczającego stanu: ${product.name} (rozmiar ${item.size}).` },
+            {
+              error: `Brak wystarczającego stanu: ${product.name} (rozmiar ${item.size}).`,
+              code: "OUT_OF_STOCK",
+              productId: item.productId,
+              size: item.size,
+            },
             400
           );
         }
       } else {
         if ((product.stock_quantity ?? 0) < item.quantity) {
           return json(
-            { error: `Brak wystarczającego stanu: ${product.name}.` },
+            {
+              error: `Brak wystarczającego stanu: ${product.name}.`,
+              code: "OUT_OF_STOCK",
+              productId: item.productId,
+              size: null,
+            },
             400
           );
         }

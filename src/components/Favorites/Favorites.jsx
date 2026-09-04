@@ -129,6 +129,11 @@ export class Favorites extends Component {
 				<div className={css.content}>
 					{this.renderHeader()}
 					<div className={css.loginCard}>
+						<div className={css.loginIconBadge}>
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M12 20.5s-7.5-4.6-10-9.3C0.3 7.8 2 4.5 5.3 4c2-.3 3.9.6 5 2.2C11.3 4.6 13.2 3.7 15.2 4c3.3.5 5 3.8 3.3 7.2-2.5 4.7-10 9.3-10 9.3Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+							</svg>
+						</div>
 						<div className={css.loginTitle}>Zaloguj się, aby zobaczyć ulubione</div>
 						<p className={css.loginText}>{LOGIN_NOTICE}</p>
 						<button className={css.loginBtn} onClick={this.openAuthAlert}>
