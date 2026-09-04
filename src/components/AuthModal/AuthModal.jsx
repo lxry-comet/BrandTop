@@ -151,7 +151,13 @@ export class AuthModal extends Component {
 		const { error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',
 			options: {
-				redirectTo: window.location.origin
+				// UWAGA: samo window.location.origin ucina ścieżkę bazową aplikacji.
+				// Na GitHub Pages projekt jest hostowany pod /nazwa-repo/ (np.
+				// https://lxry-comet.github.io/BrandTop/), a nie pod samym originem
+				// (https://lxry-comet.github.io/) — tam nic nie ma, stąd ekran 404 po
+				// powrocie z logowania Google. import.meta.env.BASE_URL to dokładnie ta
+				// sama ścieżka bazowa, której już używasz w ProductPage.jsx do obrazków.
+				redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`
 			}
 		})
 

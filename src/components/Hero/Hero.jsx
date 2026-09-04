@@ -38,7 +38,9 @@ export class Hero extends Component {
 		const type = new URLSearchParams(window.location.search).get('type')
 
 		let query = supabase.from('products').select('*')
-		if (type) query = query.eq('type', type)
+		// ilike zamiast eq — patrz komentarz w Catalog.jsx: część starych produktów
+		// ma type zapisany jako 'Obuwie' (wielka litera), nowe jako 'obuwie'.
+		if (type) query = query.ilike('type', type)
 
 		const { data, error } = await query
 

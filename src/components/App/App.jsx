@@ -7,7 +7,7 @@
 // * 			 			  New
 // ? 	 					 	Contacts
 // *              Footer
-import React, { Component } from 'react'
+import React, { Component, useEffect, useRef } from 'react'
 
 //? imports styles
 import css from './App.module.css'
@@ -23,7 +23,7 @@ import {Newproducts} from '@/components/Newproducts/Newproducts.jsx'
 import {Contacts} from '@/components/Contacts/Contacts.jsx'
 import {Catalog} from '@/components/Catalog/Catalog.jsx'
 import CheckoutSuccess from '@/components/CheckoutSuccess/CheckoutSuccess.jsx'
-import { Route, Routes, useLocation } from 'react-router-dom'
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import {Wideo} from '@/components/Wideo/Wideo.jsx'
 import CartWithNavigate from '@/components/Cart/CartWithNavigate.jsx'
 import {Favorites} from '@/components/Favorites/Favorites.jsx'
@@ -44,10 +44,30 @@ function HomePage() {
 	)
 }
 
+// signInWithOAuth (logowanie Google w AuthModal.jsx) robi pełne przekierowanie
+// przeglądarki i wraca na redirectTo z tokenami w #hash — sprawdzamy to raz,
+// zaraz przy starcie modułu, zanim klient Supabase zdąży "posprzątać" hash z URL
+// (żeby nie zgubić tej informacji przez wyścig z asynchronicznym onAuthStateChange).
+let cameFromOAuthRedirect = typeof window !== 'undefined' && window.location.hash.includes('access_token')
+
 // Вынесено в функциональный компонент, чтобы можно было
 // использовать useLocation() и пересоздавать Catalog при смене ?type=
 function AppRoutes({ user, authLoading }) {
 	const location = useLocation()
+	const navigate = useNavigate()
+	const redirectedRef = useRef(false)
+
+	// Po powrocie z logowania Google od razu przenosimy usera do "Moje konto" —
+	// tam widać e-mail konta i można od razu uzupełnić dane, których Google nie
+	// podaje (telefon, data urodzenia, płeć). Bez tego klient wraca po prostu
+	// na stronę główną i wygląda, jakby logowanie nic nie zmieniło.
+	useEffect(() => {
+		if (cameFromOAuthRedirect && user && !redirectedRef.current) {
+			redirectedRef.current = true
+			cameFromOAuthRedirect = false
+			navigate('/account', { replace: true })
+		}
+	}, [user, navigate])
 
 	return (
 		<Routes>

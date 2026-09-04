@@ -15,17 +15,38 @@ const TYPE_OPTIONS = [
 	{ value: 'odziez', label: 'Odzież' }
 ]
 
+const SEASON_OPTIONS = ['', 'Lato', 'Zima', 'Wiosna', 'Jesień', 'Wiosna-Jesień', 'Cały rok']
+
 const EMPTY_FORM = {
 	name: '',
 	type: TYPE_OPTIONS[0].value,
 	brand: '',
 	model: '',
 	price_pln: '',
+	old_price_pln: '',
 	stock_quantity: '0',
 	unit: 'szt.',
 	description: '',
 	is_active: true,
-	image_url: ''
+	image_url: '',
+	// Filtry z makiety (Płeć/Typ/Rodzaj/Kolor) — trzymane w formularzu jako proste
+	// pole tekstowe z wartościami po przecinku (np. "Mężczyzna, Kobieta"), a przy
+	// zapisie zamieniane na tablicę (patrz parseList/handleSubmit poniżej).
+	// To dużo mniej kodu niż osobny picker-chipów dla każdego pola, a daje
+	// dokładnie tę samą funkcjonalność.
+	gender: '',
+	season: '',
+	product_type: '',
+	kind: '',
+	color: ''
+}
+
+// "Mężczyzna, Kobieta" -> ["Mężczyzna", "Kobieta"]; puste/białe znaki pomijane.
+function parseList(str) {
+	return (str || '')
+		.split(',')
+		.map(s => s.trim())
+		.filter(Boolean)
 }
 
 // Usuwa polskie znaki diakrytyczne — ten sam pomysł co transliteracja
@@ -173,11 +194,17 @@ class AdminBase extends Component {
 				brand: product.brand || '',
 				model: product.model || '',
 				price_pln: product.price_pln ?? '',
+				old_price_pln: product.old_price_pln ?? '',
 				stock_quantity: product.stock_quantity ?? '0',
 				unit: product.unit || 'szt.',
 				description: product.description || '',
 				is_active: product.is_active ?? true,
-				image_url: product.image_url || ''
+				image_url: product.image_url || '',
+				gender: (product.gender || []).join(', '),
+				season: product.season || '',
+				product_type: (product.product_type || []).join(', '),
+				kind: (product.kind || []).join(', '),
+				color: (product.color || []).join(', ')
 			},
 			imageFile: null,
 			imagePreview: product.image_url || null,
@@ -254,10 +281,16 @@ class AdminBase extends Component {
 				model: formData.model || null,
 				description: formData.description || null,
 				price_pln: parseFloat(formData.price_pln) || 0,
+				old_price_pln: formData.old_price_pln === '' ? null : parseFloat(formData.old_price_pln) || null,
 				stock_quantity: parseInt(formData.stock_quantity, 10) || 0,
 				unit: formData.unit || 'szt.',
 				image_url: imageUrl || null,
 				is_active: formData.is_active,
+				gender: parseList(formData.gender),
+				season: formData.season || null,
+				product_type: parseList(formData.product_type),
+				kind: parseList(formData.kind),
+				color: parseList(formData.color),
 				updated_at: new Date().toISOString()
 			}
 
@@ -549,8 +582,67 @@ class AdminBase extends Component {
 						</label>
 
 						<label className={css.field}>
+							<span>Cena przed promocją (PLN)</span>
+							<input
+								type='number' step='0.01' min='0'
+								placeholder='puste = brak promocji'
+								value={formData.old_price_pln}
+								onChange={this.handleFieldChange('old_price_pln')}
+							/>
+						</label>
+
+						<label className={css.field}>
 							<span>Ilość na stanie</span>
 							<input type='number' min='0' value={formData.stock_quantity} onChange={this.handleFieldChange('stock_quantity')} />
+						</label>
+
+						<label className={css.field}>
+							<span>Płeć</span>
+							<input
+								type='text'
+								placeholder='np. Mężczyzna, Kobieta'
+								value={formData.gender}
+								onChange={this.handleFieldChange('gender')}
+							/>
+						</label>
+
+						<label className={css.field}>
+							<span>Sezon</span>
+							<select value={formData.season} onChange={this.handleFieldChange('season')}>
+								{SEASON_OPTIONS.map(opt => (
+									<option key={opt} value={opt}>{opt || '— nie wybrano —'}</option>
+								))}
+							</select>
+						</label>
+
+						<label className={css.field}>
+							<span>Typ (głównie Obuwie)</span>
+							<input
+								type='text'
+								placeholder='np. Bieganie, Trening'
+								value={formData.product_type}
+								onChange={this.handleFieldChange('product_type')}
+							/>
+						</label>
+
+						<label className={css.field}>
+							<span>Rodzaj (głównie Odzież/Akcesoria)</span>
+							<input
+								type='text'
+								placeholder='np. Bluza, Czapka'
+								value={formData.kind}
+								onChange={this.handleFieldChange('kind')}
+							/>
+						</label>
+
+						<label className={css.field}>
+							<span>Kolor</span>
+							<input
+								type='text'
+								placeholder='np. Czarny, Biały'
+								value={formData.color}
+								onChange={this.handleFieldChange('color')}
+							/>
 						</label>
 
 						<label className={css.fieldCheckbox}>
@@ -558,6 +650,7 @@ class AdminBase extends Component {
 							<span>Produkt aktywny (widoczny w sklepie)</span>
 						</label>
 					</div>
+					<p className={css.formHint}>Płeć / Typ / Rodzaj / Kolor: kilka wartości oddzielaj przecinkiem — to właśnie te pola widać potem jako chipy w filtrach katalogu.</p>
 
 					<label className={css.field}>
 						<span>Opis</span>

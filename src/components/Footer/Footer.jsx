@@ -51,10 +51,10 @@ export class Footer extends Component {
 								</p>
 								<div className={css.footer__contacts}>
 									<a
-										href='tel:+48881405113'
+										href='tel:+48502725148'
 										className={css.footer__contactItem}
 									>
-										+48 881 405 113
+										+48 502 725 148
 									</a>
 									<a
 										href='mailto:lakos827@gmail.com'
@@ -63,7 +63,7 @@ export class Footer extends Component {
 										lakos827@gmail.com
 									</a>
 									<span className={css.footer__contactItem}>
-										ul. Modowa 42, Warszawa
+										Bohaterów Września 80, Świnoujście
 									</span>
 								</div>
 							</div>

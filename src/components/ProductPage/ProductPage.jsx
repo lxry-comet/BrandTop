@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient.js'
-import { addToCart } from '@/lib/favoritesCartService.js'
+import { addToCart, toggleFavorite } from '@/lib/favoritesCartService.js'
 import { AuthModal } from '@/components/AuthModal/AuthModal.jsx'
 import css from './ProductPage.module.css'
 
@@ -63,6 +63,7 @@ function buildSpecs(product) {
 }
 
 const ADD_TO_CART_NOTICE = 'Zaloguj się lub załóż konto, aby dodać produkt do koszyka.'
+const ADD_TO_FAVORITES_NOTICE = 'Zaloguj się lub załóż konto, aby dodać produkt do ulubionych.'
 
 class ProductPage extends Component {
 	state = {
@@ -72,16 +73,40 @@ class ProductPage extends Component {
 		mainImageIndex: 0,
 		selectedSize: null,
 		sizeWarning: false,
+		userId: null,
 		liked: false,
+		favError: '',
 		added: false,
 		addingToCart: false,
 		cartError: '',
 		authAlertOpen: false,
+		// Który przycisk otworzył AuthModal — po zalogowaniu trzeba dokończyć
+		// dokładnie tę akcję (dodanie do koszyka albo do ulubionych), a nie zawsze koszyk.
+		authIntent: 'cart',
 	}
 
 	componentDidMount() {
 		this.fetchProduct()
+		this.loadUserAndFavoriteStatus()
 		window.scrollTo({ top: 0, behavior: 'smooth' })
+	}
+
+	// Sprawdza, czy ten produkt jest już w ulubionych zalogowanego usera —
+	// bez tego serce zawsze startowałoby jako puste, nawet jeśli produkt
+	// był wcześniej polubiony w katalogu.
+	loadUserAndFavoriteStatus = async () => {
+		const { data: { user } } = await supabase.auth.getUser()
+		this.setState({ userId: user?.id ?? null })
+		if (!user) return
+
+		const { data, error } = await supabase
+			.from('favorites')
+			.select('id')
+			.eq('user_id', user.id)
+			.eq('product_id', this.props.id)
+			.maybeSingle()
+
+		if (!error) this.setState({ liked: Boolean(data) })
 	}
 
 	fetchProduct = async () => {
@@ -117,8 +142,27 @@ class ProductPage extends Component {
 		this.setState({ selectedSize: sizeEntry.size, sizeWarning: false })
 	}
 
-	handleToggleFav = () => {
-		this.setState((prev) => ({ liked: !prev.liked }))
+	// Wcześniej to był czysto lokalny toggle (this.setState liked: !liked)) —
+	// serce "działało" wizualnie, ale nic nie zapisywało się w tabeli
+	// `favorites`, więc znikało po odświeżeniu i nie pojawiało się na stronie
+	// "Ulubione". Teraz zachowuje się dokładnie jak serce w CatalogGrid.jsx.
+	handleToggleFav = async () => {
+		const { userId, liked } = this.state
+		const { id } = this.props
+
+		if (!userId) {
+			this.setState({ authAlertOpen: true, authIntent: 'favorite' })
+			return
+		}
+
+		// Optymistyczna zmiana — serce reaguje natychmiast, rollback przy błędzie.
+		this.setState({ liked: !liked, favError: '' })
+
+		try {
+			await toggleFavorite(userId, id)
+		} catch (error) {
+			this.setState({ liked, favError: error?.message || 'Nie udało się zaktualizować ulubionych.' })
+		}
 	}
 
 	// Sprawdza, czy klient jest zalogowany, zanim faktycznie zapisze coś w bazie.
@@ -139,13 +183,13 @@ class ProductPage extends Component {
 		const { data: { user } } = await supabase.auth.getUser()
 
 		if (!user) {
-			this.setState({ addingToCart: false, authAlertOpen: true })
+			this.setState({ addingToCart: false, authAlertOpen: true, authIntent: 'cart' })
 			return
 		}
 
 		try {
 			await addToCart(user.id, product.id, selectedSize, 1)
-			this.setState({ addingToCart: false, added: true })
+			this.setState({ addingToCart: false, added: true, userId: user.id })
 			setTimeout(() => this.setState({ added: false }), 1600)
 		} catch (error) {
 			this.setState({ addingToCart: false, cartError: error?.message || 'Nie udało się dodać produktu do koszyka.' })
@@ -154,18 +198,21 @@ class ProductPage extends Component {
 
 	closeAuthAlert = () => this.setState({ authAlertOpen: false })
 
-	// Po udanym zalogowaniu/rejestracji z alertu — od razu dokańcza przerwane dodanie do koszyka.
-	handleAuthSuccess = () => {
-		this.setState({ authAlertOpen: false }, () => {
-			this.handleAddToCart()
+	// Po udanym zalogowaniu/rejestracji z alertu — od razu dokańcza przerwaną
+	// akcję: dodanie do koszyka albo do ulubionych, w zależności co ją otworzyło.
+	handleAuthSuccess = (user) => {
+		const { authIntent } = this.state
+		this.setState({ authAlertOpen: false, userId: user?.id ?? this.state.userId }, () => {
+			if (authIntent === 'favorite') this.handleToggleFav()
+			else this.handleAddToCart()
 		})
 	}
 
 	render() {
 		const { navigate } = this.props
 		const {
-			product, loading, error, mainImageIndex, selectedSize, sizeWarning, liked,
-			added, addingToCart, cartError, authAlertOpen,
+			product, loading, error, mainImageIndex, selectedSize, sizeWarning, liked, favError,
+			added, addingToCart, cartError, authAlertOpen, authIntent,
 		} = this.state
 
 		if (loading) {
@@ -234,6 +281,7 @@ class ProductPage extends Component {
 							<button className={`${css.btnFav} ${liked ? css.liked : ''}`} onClick={this.handleToggleFav}>
 								<span className={css.favIconInline}>{HEART_SVG}</span> Ulubione
 							</button>
+							{favError && <div className={css.sizeWarning}>{favError}</div>}
 						</div>
 					</div>
 
@@ -316,7 +364,7 @@ class ProductPage extends Component {
 					isOpen={authAlertOpen}
 					onClose={this.closeAuthAlert}
 					onAuthSuccess={this.handleAuthSuccess}
-					notice={ADD_TO_CART_NOTICE}
+					notice={authIntent === 'favorite' ? ADD_TO_FAVORITES_NOTICE : ADD_TO_CART_NOTICE}
 				/>
 			</div>
 		)
