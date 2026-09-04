@@ -31,10 +31,6 @@ export class Contacts extends Component {
 		this.setState({ email: '', message: '' })
 	}
 
-	handleMapImageError = (e) => {
-		e.target.style.display = 'none'
-	}
-
 	render() {
 		//! [1] Блок диструктуризації props та state
 		const { email, message } = this.state
@@ -49,24 +45,26 @@ export class Contacts extends Component {
 					<div className={css.contacts__box}>
 						<div className={css.contacts__mapside}>
 							<div className={css.contacts__maplabel}>Tutaj nas znajdziesz</div>
-							<a
-								className={css.contacts__maplink}
-								href='https://www.google.com/maps/search/Brand-Top+sklep+Kraków'
-								target='_blank'
-								rel='noopener noreferrer'
-							>
-								<div className={css.contacts__mappreview}>
-									<img
-										src='https://maps.googleapis.com/maps/api/staticmap?center=Krak%C3%B3w,Poland&zoom=14&size=400x260&maptype=roadmap&markers=color:red|Krak%C3%B3w,Poland&style=feature:all|element:geometry|color:0x242f3e&style=feature:all|element:labels.text.stroke|color:0x242f3e&style=feature:all|element:labels.text.fill|color:0x746855&key=nokey'
-										alt='Mapa'
-										onError={this.handleMapImageError}
-									/>
-									<div className={css.contacts__mapoverlay}>
-										<span className={css.contacts__mappin}>📍</span>
-										<span className={css.contacts__mapcta}>Otwórz w Google Maps</span>
-									</div>
-								</div>
-							</a>
+							<div className={css.contacts__mappreview}>
+								{/* Google Maps Embed po cid — bezpłatny, nie wymaga klucza API
+								    (w przeciwieństwie do Static Maps API, które wcześniej tu było
+								    i nigdy nie działało, bo miało zaszyty placeholder key=nokey). */}
+								<iframe
+									className={css.contacts__mapiframe}
+									src='https://www.google.com/maps?cid=12089228993263019833&output=embed'
+									title='Lokalizacja Brand-Top'
+									loading='lazy'
+									referrerPolicy='no-referrer-when-downgrade'
+								/>
+								<a
+									className={css.contacts__mapopenbtn}
+									href='https://www.google.com/maps?cid=12089228993263019833'
+									target='_blank'
+									rel='noopener noreferrer'
+								>
+									📍 Otwórz w Google Maps
+								</a>
+							</div>
 						</div>
 
 						<div className={css.contacts__formside}>

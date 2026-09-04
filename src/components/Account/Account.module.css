@@ -7,7 +7,13 @@
 	max-width: 900px;
 	margin: 0 auto;
 	padding: 20px 16px 60px;
-	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	font-family:
+		'Inter',
+		system-ui,
+		-apple-system,
+		'Segoe UI',
+		Roboto,
+		sans-serif;
 	color: #ffffff;
 }
 
@@ -161,7 +167,9 @@
 	border: 1px solid rgba(255, 255, 255, 0.13);
 	border-radius: 22px;
 	padding: 26px 28px;
-	box-shadow: 0 8px 28px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.07);
+	box-shadow:
+		0 8px 28px rgba(0, 0, 0, 0.3),
+		inset 0 1px 0 rgba(255, 255, 255, 0.07);
 }
 
 @media (max-width: 640px) {
@@ -223,7 +231,7 @@
 
 /* input — identyczne z .prof-input */
 .input {
-	background: rgba(255, 255, 255, 0.07);
+	background: rgba(255, 255, 255, 0.6);
 	border: 1px solid rgba(255, 255, 255, 0.15);
 	border-radius: 10px;
 	color: #ffffff;
@@ -237,7 +245,7 @@
 
 .input:focus {
 	border-color: #ff5e00;
-	background: rgba(255, 255, 255, 0.10);
+	background: rgba(255, 255, 255, 0.65);
 	box-shadow: 0 0 0 3px rgba(255, 94, 0, 0.15);
 }
 
@@ -305,7 +313,8 @@
 	transform: none;
 }
 
-.loadingText, .emptyText {
+.loadingText,
+.emptyText {
 	font-size: 14px;
 	color: #999999;
 	padding: 10px 0;

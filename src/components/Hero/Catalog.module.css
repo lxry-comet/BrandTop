@@ -40,10 +40,10 @@
 .catalog_btn {
 	composes: btnStyle;
 	justify-self: start;
-	background: rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.4);
 	backdrop-filter: blur(14px) saturate(160%);
 	-webkit-backdrop-filter: blur(14px) saturate(160%);
-	border: 1px solid rgba(255, 255, 255, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.4);
 }
 @media (max-width: 640px) {
 	.catalog_btn {
@@ -64,23 +64,23 @@
 	margin: 0;
 
 	font-size: 26px;
-  font-weight: 900;
-  margin: 20px 0 6px;
-  letter-spacing: -0.5px;
-  color: #ffffff;
-  text-transform: uppercase;
-  position: relative;
-  display: inline-block;
+	font-weight: 900;
+	margin: 20px 0 6px;
+	letter-spacing: -0.5px;
+	color: #ffffff;
+	text-transform: uppercase;
+	position: relative;
+	display: inline-block;
 }
 .catalog_title::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: var(--accent);
-  border-radius: 2px;
+	content: '';
+	position: absolute;
+	bottom: -4px;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	background: var(--accent);
+	border-radius: 2px;
 }
 @media (max-width: 640px) {
 	.catalog_title {
@@ -96,7 +96,9 @@
 	}
 }
 @media (max-width: 360px) {
-	.catalog_title { font-size: 17px; }
+	.catalog_title {
+		font-size: 17px;
+	}
 }
 .catalog_FilterBtn {
 	justify-self: end;
@@ -126,7 +128,7 @@
 	white-space: nowrap;
 }
 .catalog_FilterBtn:hover {
-	background: rgba(255, 255, 255, 0.3);
+	background: rgba(255, 255, 255, 0.55);
 	border-color: #ffffff;
 }
 @media (max-width: 640px) {

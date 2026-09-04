@@ -40,10 +40,10 @@
 .catalog_btn {
 	composes: btnStyle;
 	justify-self: start;
-	background: rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.4);
 	backdrop-filter: blur(14px) saturate(160%);
 	-webkit-backdrop-filter: blur(14px) saturate(160%);
-	border: 1px solid rgba(255, 255, 255, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.4);
 }
 @media (max-width: 640px) {
 	.catalog_btn {
@@ -64,23 +64,23 @@
 	margin: 0;
 
 	font-size: 26px;
-  font-weight: 900;
-  margin: 20px 0 6px;
-  letter-spacing: -0.5px;
-  color: #ffffff;
-  text-transform: uppercase;
-  position: relative;
-  display: inline-block;
+	font-weight: 900;
+	margin: 20px 0 6px;
+	letter-spacing: -0.5px;
+	color: #ffffff;
+	text-transform: uppercase;
+	position: relative;
+	display: inline-block;
 }
 .catalog_title::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: var(--accent);
-  border-radius: 2px;
+	content: '';
+	position: absolute;
+	bottom: -4px;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	background: var(--accent);
+	border-radius: 2px;
 }
 @media (max-width: 640px) {
 	.catalog_title {
@@ -96,19 +96,21 @@
 	}
 }
 @media (max-width: 360px) {
-	.catalog_title { font-size: 17px; }
+	.catalog_title {
+		font-size: 17px;
+	}
 }
 .catalog_FilterBtn {
 	justify-self: end;
 	margin: 0;
 
 	padding: 10px 22px;
-	background: rgba(255, 255, 255, 0.18);
+	background: rgba(255, 255, 255, 0.4);
 	backdrop-filter: blur(14px) saturate(160%);
 	-webkit-backdrop-filter: blur(14px) saturate(160%);
 	color: #ffffff;
 	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
-	border: 2px solid rgba(255, 255, 255, 0.45);
+	border: 2px solid rgba(255, 255, 255, 0.65);
 	border-top-color: rgba(255, 255, 255, 0.45);
 	border-right-color: rgba(255, 255, 255, 0.45);
 	border-bottom-color: rgba(255, 255, 255, 0.45);
@@ -126,7 +128,7 @@
 	white-space: nowrap;
 }
 .catalog_FilterBtn:hover {
-	background: rgba(255, 255, 255, 0.3);
+	background: rgba(255, 255, 255, 0.55);
 	border-color: #ffffff;
 }
 @media (max-width: 640px) {
@@ -181,11 +183,13 @@
 .filterPanel {
 	width: 340px;
 	max-width: 86vw;
-	background: rgba(0, 0, 0, 0.55);
+	background: rgba(0, 0, 0, 0.75);
 	backdrop-filter: blur(24px) saturate(180%);
 	-webkit-backdrop-filter: blur(24px) saturate(180%);
 	border-left: 1px solid rgba(255, 255, 255, 0.14);
-	box-shadow: -2px 0 24px rgba(0, 0, 0, 0.35), inset 1px 0 0 rgba(255, 255, 255, 0.06);
+	box-shadow:
+		-2px 0 24px rgba(0, 0, 0, 0.35),
+		inset 1px 0 0 rgba(255, 255, 255, 0.06);
 	padding: 20px;
 	overflow-y: auto;
 	overscroll-behavior: contain;
@@ -194,14 +198,23 @@
 	top: 0;
 	height: 100%;
 	z-index: 100;
-	transition: transform 0.35s ease, opacity 0.35s ease;
+	transition:
+		transform 0.35s ease,
+		opacity 0.35s ease;
 	transform: translateX(100%);
 	opacity: 0;
 	pointer-events: none;
 }
-.filterPanel::-webkit-scrollbar { width: 6px; }
-.filterPanel::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.18); border-radius: 3px; }
-.filterPanel::-webkit-scrollbar-track { background: transparent; }
+.filterPanel::-webkit-scrollbar {
+	width: 6px;
+}
+.filterPanel::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 3px;
+}
+.filterPanel::-webkit-scrollbar-track {
+	background: transparent;
+}
 
 .filterPanelOpen {
 	transform: translateX(0);

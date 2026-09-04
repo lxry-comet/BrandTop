@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
     for (const item of items) {
       const { data: product, error: prodError } = await supabase
         .from("products")
-        .select("id, name, price_pln, image_url")
+        .select("id, name, price_pln, image_url, stock_quantity")
         .eq("id", item.productId)
         .eq("is_active", true)
         .maybeSingle();
@@ -93,25 +93,43 @@ Deno.serve(async (req) => {
         return json({ error: `Produkt ${item.productId} niedostępny.` }, 400);
       }
 
-      const { data: sizeRow, error: sizeError } = await supabase
-        .from("product_sizes")
-        .select("size, stock")
-        .eq("product_id", item.productId)
-        .eq("size", item.size)
-        .maybeSingle();
+      // Produkty bez rozmiarów (np. Akcesoria) NIE MAJĄ żadnego wiersza w
+      // product_sizes — to nie błąd danych, tabela ta dotyczy tylko produktów
+      // z rozmiarami (Obuwie). Wcześniej funkcja zawsze szukała w
+      // product_sizes, więc przy item.size === null zapytanie .eq('size', null)
+      // nigdy nic nie znajdowało i zwracało błąd "Brak wystarczającego stanu"
+      // nawet dla towaru realnie dostępnego. Teraz: jeśli klient wybrał
+      // rozmiar — sprawdzamy stan w product_sizes jak dotychczas; jeśli
+      // rozmiaru nie ma (produkt bez rozmiarów) — sprawdzamy stock_quantity
+      // bezpośrednio w products.
+      if (item.size != null) {
+        const { data: sizeRow, error: sizeError } = await supabase
+          .from("product_sizes")
+          .select("size, stock")
+          .eq("product_id", item.productId)
+          .eq("size", item.size)
+          .maybeSingle();
 
-      if (sizeError || !sizeRow || sizeRow.stock < item.quantity) {
-        return json(
-          { error: `Brak wystarczającego stanu: ${product.name} (rozmiar ${item.size}).` },
-          400
-        );
+        if (sizeError || !sizeRow || sizeRow.stock < item.quantity) {
+          return json(
+            { error: `Brak wystarczającego stanu: ${product.name} (rozmiar ${item.size}).` },
+            400
+          );
+        }
+      } else {
+        if ((product.stock_quantity ?? 0) < item.quantity) {
+          return json(
+            { error: `Brak wystarczającego stanu: ${product.name}.` },
+            400
+          );
+        }
       }
 
       lineItems.push({
         price_data: {
           currency: "pln",
           product_data: {
-            name: `${product.name} (rozm. ${item.size})`,
+            name: item.size != null ? `${product.name} (rozm. ${item.size})` : product.name,
             images: product.image_url ? [product.image_url] : undefined,
           },
           unit_amount: Math.round(product.price_pln * 100),

@@ -47,13 +47,6 @@ html {
 body {
 	font-family: var(--font);
 	background-color: #2b2b2b;
-	background-image:
-		linear-gradient(rgba(20, 20, 20, 0.62), rgba(20, 20, 20, 0.7)),
-		url('../public/background.jpg');
-	background-size: cover;
-	background-position: center;
-	background-repeat: no-repeat;
-	background-attachment: fixed;
 	color: var(--text);
 	line-height: 1.5;
 	-webkit-font-smoothing: antialiased;
@@ -63,7 +56,23 @@ body {
 	min-height: 100vh;
 	padding-bottom: 0;
 	position: relative;
+	isolation: isolate;
 	scroll-behavior: smooth;
+}
+
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	background-image:
+		linear-gradient(rgba(20, 20, 20, 0.62), rgba(20, 20, 20, 0.7)),
+		url('/BrandTop/background.jpg');
+	background-size: cover;
+	background-position: center center;
+	background-repeat: no-repeat;
+	transform: translateZ(0);
+	will-change: transform;
 }
 
 code {

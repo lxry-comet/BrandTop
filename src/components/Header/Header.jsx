@@ -206,7 +206,7 @@ export class Header extends Component {
 									id='searchInput'
 									placeholder='Szukaj sneakersów...'
 									// onChange={onSearch}
-									autocomplete='off'
+									autoComplete='off'
 								></input>
 							</div>
 						</div>

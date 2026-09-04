@@ -4,10 +4,14 @@
 	margin: 0 auto;
 }
 @media (max-width: 640px) {
-	.content { padding: 0 12px; }
+	.content {
+		padding: 0 12px;
+	}
 }
 @media (min-width: 1024px) {
-	.content { padding: 0 24px; }
+	.content {
+		padding: 0 24px;
+	}
 }
 
 /* ==================== PAGE HEADER ==================== */
@@ -24,10 +28,10 @@
 	align-items: center;
 	justify-content: center;
 	gap: 6px;
-	background: rgba(255, 255, 255, 0.16);
+	background: rgba(255, 255, 255, 0.4);
 	backdrop-filter: blur(14px) saturate(160%);
 	-webkit-backdrop-filter: blur(14px) saturate(160%);
-	border: 1px solid rgba(255, 255, 255, 0.16);
+	border: 1px solid rgba(255, 255, 255, 0.4);
 	color: #ffffff;
 	padding: 10px 18px;
 	border-radius: 24px;
@@ -41,7 +45,7 @@
 	white-space: nowrap;
 }
 .back_btn:hover {
-	background: rgba(255, 255, 255, 0.28);
+	background: rgba(255, 255, 255, 0.5);
 	transform: translateY(-2px);
 }
 
@@ -74,8 +78,13 @@
 }
 
 @media (max-width: 640px) {
-	.section_title { font-size: 20px; }
-	.back_btn { font-size: 12px; padding: 8px 14px; }
+	.section_title {
+		font-size: 20px;
+	}
+	.back_btn {
+		font-size: 12px;
+		padding: 8px 14px;
+	}
 }
 
 /* ==================== EMPTY STATE ==================== */
@@ -301,7 +310,9 @@
 	fill: none;
 	stroke: rgba(255, 255, 255, 0.75);
 	stroke-width: 1.8;
-	transition: fill 0.25s ease, stroke 0.25s ease;
+	transition:
+		fill 0.25s ease,
+		stroke 0.25s ease;
 }
 /* W tym widoku serce jest domyślnie "zapalone" — produkt jest tu wylistowany, bo jest ulubiony. */
 .liked .heartSvg path {
@@ -310,5 +321,8 @@
 }
 
 @media (min-width: 481px) and (max-width: 640px) {
-	.fav_row { padding: 12px 14px; font-size: 13px; }
+	.fav_row {
+		padding: 12px 14px;
+		font-size: 13px;
+	}
 }
