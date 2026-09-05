@@ -235,7 +235,11 @@ class ProductPage extends Component {
 		const gallery = this.getGallery()
 		const sizes = sortSizes(product.product_sizes)
 		const specs = buildSpecs(product)
-		const hasDiscount = Boolean(product.oldPrice)
+		// Kolumny w bazie to price_pln / old_price_pln (nie price / oldPrice) —
+		// to był powód, dla którego cena w ogóle się nie wyświetlała.
+		const price = product.price_pln
+		const oldPrice = product.old_price_pln
+		const hasDiscount = Boolean(oldPrice)
 
 		return (
 			<div className={css.page}>
@@ -290,16 +294,16 @@ class ProductPage extends Component {
 
 						{hasDiscount ? (
 							<div className={css.price}>
-								<span className={css.oldPrice}>{product.oldPrice} zł</span>
-								<span className={css.salePrice}>{product.price} zł</span>
+								<span className={css.oldPrice}>{oldPrice} zł</span>
+								<span className={css.salePrice}>{price} zł</span>
 							</div>
 						) : (
-							<div className={css.price}>{product.price} zł</div>
+							<div className={css.price}>{price} zł</div>
 						)}
 
 						<div className={css.promoNotice}>
 							{hasDiscount
-								? `Ten produkt jest objęty promocją — oszczędzasz ${product.oldPrice - product.price} zł.`
+								? `Ten produkt jest objęty promocją — oszczędzasz ${oldPrice - price} zł.`
 								: 'Ten produkt nie jest objęty promocją ani rabatem.'}
 						</div>
 
@@ -349,12 +353,13 @@ class ProductPage extends Component {
 										</table>
 									</div>
 								</details>
-								<details className={css.accItem}>
+								{/* WYSYŁKA I ZWROTY
+								<details className={css.accItem}> 
 									<summary>Wysyłka i zwroty</summary>
 									<div className={css.accBody}>
 										Darmowa dostawa od 200 zł. Bezpłatny zwrot możliwy w ciągu 30 dni od otrzymania zamówienia.
 									</div>
-								</details>
+								</details>*/}
 							</div>
 						)}
 					</div>
