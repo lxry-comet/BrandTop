@@ -7,8 +7,8 @@
 //   STRIPE_SECRET_KEY
 //   SITE_URL   (np. https://twoja-domena.pl — do success/cancel url)
 
-import { createClient } from "npm:@supabase/supabase-js@2";
-import Stripe from "npm:stripe@14";
+import { createClient } from "npm:@supabase/supabase-js@2"
+import Stripe from "npm:stripe@14"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -155,7 +155,15 @@ Deno.serve(async (req) => {
       });
     }
 
-    const siteUrl = Deno.env.get("SITE_URL")!;
+    const configuredSiteUrl = Deno.env.get("SITE_URL") ?? "https://brandtopsneakers.pl";
+    let siteUrl: string;
+    try {
+      const parsedSiteUrl = new URL(configuredSiteUrl);
+      if (!/^https?:$/.test(parsedSiteUrl.protocol)) throw new Error("Nieprawidłowy protokół SITE_URL");
+      siteUrl = parsedSiteUrl.origin;
+    } catch {
+      return json({ error: "Nieprawidłowa konfiguracja adresu sklepu (SITE_URL)." }, 500);
+    }
 
     // 4) Sesja Stripe — karta + BLIK, stała opcja dostawy
     const session = await stripe.checkout.sessions.create({
