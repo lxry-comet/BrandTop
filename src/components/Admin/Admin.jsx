@@ -81,8 +81,12 @@ class AdminBase extends Component {
 		loadingProducts: false,
 		editingProduct: null,
 		formData: EMPTY_FORM,
-		imageFile: null,
-		imagePreview: null,
+		// Zdjęcia produktu — teraz wiele naraz:
+		// existingGallery: URL-e już zapisane w bazie (przy edycji istniejącego produktu)
+		// newImageFiles / newImagePreviews: nowo wybrane pliki (jeszcze nie wysłane do Storage)
+		existingGallery: [],
+		newImageFiles: [],
+		newImagePreviews: [],
 		saving: false,
 		saveError: null,
 		search: '',
@@ -178,8 +182,9 @@ class AdminBase extends Component {
 			view: 'form',
 			editingProduct: null,
 			formData: EMPTY_FORM,
-			imageFile: null,
-			imagePreview: null,
+			existingGallery: [],
+			newImageFiles: [],
+			newImagePreviews: [],
 			saveError: null
 		})
 	}
@@ -206,14 +211,25 @@ class AdminBase extends Component {
 				kind: (product.kind || []).join(', '),
 				color: (product.color || []).join(', ')
 			},
-			imageFile: null,
-			imagePreview: product.image_url || null,
+			// Stare produkty mogą jeszcze nie mieć wypełnionej kolumny gallery —
+			// wtedy pokazujemy przynajmniej to jedno zdjęcie z image_url.
+			existingGallery: (product.gallery && product.gallery.length)
+				? product.gallery
+				: (product.image_url ? [product.image_url] : []),
+			newImageFiles: [],
+			newImagePreviews: [],
 			saveError: null
 		})
 	}
 
 	closeForm = () => {
-		this.setState({ view: 'list', editingProduct: null, imageFile: null, imagePreview: null })
+		// Zwalniamy object URL-e podglądów nowych plików — inaczej zostają
+		// w pamięci przeglądarki po zamknięciu formularza.
+		this.state.newImagePreviews.forEach(url => URL.revokeObjectURL(url))
+		this.setState({
+			view: 'list', editingProduct: null,
+			existingGallery: [], newImageFiles: [], newImagePreviews: []
+		})
 	}
 
 	handleFieldChange = (field) => (e) => {
@@ -221,10 +237,37 @@ class AdminBase extends Component {
 		this.setState(prev => ({ formData: { ...prev.formData, [field]: value } }))
 	}
 
-	handleImageChange = (e) => {
-		const file = e.target.files?.[0]
-		if (!file) return
-		this.setState({ imageFile: file, imagePreview: URL.createObjectURL(file) })
+	// multiple na inpucie daje FileList — zamieniamy na tablicę i dokładamy
+	// do już wybranych (nie zastępujemy), żeby dało się dodawać zdjęcia
+	// w kilku turach, a nie tylko jednym wyborem w oknie systemowym.
+	handleImagesChange = (e) => {
+		const files = Array.from(e.target.files || [])
+		if (!files.length) return
+
+		const previews = files.map(file => URL.createObjectURL(file))
+		this.setState(prev => ({
+			newImageFiles: [...prev.newImageFiles, ...files],
+			newImagePreviews: [...prev.newImagePreviews, ...previews]
+		}))
+
+		// Pozwala wybrać ten sam plik ponownie i nie zostawia "wiszącej" wartości w inpucie.
+		e.target.value = ''
+	}
+
+	removeExistingImage = (index) => {
+		this.setState(prev => ({
+			existingGallery: prev.existingGallery.filter((_, i) => i !== index)
+		}))
+	}
+
+	removeNewImage = (index) => {
+		this.setState(prev => {
+			URL.revokeObjectURL(prev.newImagePreviews[index])
+			return {
+				newImageFiles: prev.newImageFiles.filter((_, i) => i !== index),
+				newImagePreviews: prev.newImagePreviews.filter((_, i) => i !== index)
+			}
+		})
 	}
 
 	generateProductId = async (typeSlug) => {
@@ -245,7 +288,11 @@ class AdminBase extends Component {
 
 	uploadImage = async (file, productId) => {
 		const ext = file.name.split('.').pop()
-		const path = `${productId}/${Date.now()}.${ext}`
+		// Date.now() sam w sobie mógłby się powtórzyć przy uploadzie kilku
+		// plików w pętli (ta sama milisekunda) i nadpisać poprzednie zdjęcie —
+		// losowy sufiks gwarantuje unikalną ścieżkę dla każdego pliku.
+		const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+		const path = `${productId}/${uniqueSuffix}.${ext}`
 
 		const { error: uploadError } = await supabase.storage
 			.from('product-images')
@@ -262,14 +309,23 @@ class AdminBase extends Component {
 		this.setState({ saving: true, saveError: null })
 
 		try {
-			const { formData, editingProduct, imageFile } = this.state
+			const { formData, editingProduct, existingGallery, newImageFiles } = this.state
 			const isEditing = Boolean(editingProduct)
 			const id = isEditing ? editingProduct.id : await this.generateProductId(formData.type)
 
-			let imageUrl = formData.image_url
-			if (imageFile) {
-				imageUrl = await this.uploadImage(imageFile, id)
+			// Uploadujemy nowo wybrane pliki po kolei (uploadImage generuje unikalną
+			// ścieżkę dla każdego), a wynikowe URL-e doklejamy do już istniejących
+			// (przy edycji) — kolejność: najpierw istniejące, potem nowe.
+			const uploadedUrls = []
+			for (const file of newImageFiles) {
+				const url = await this.uploadImage(file, id)
+				uploadedUrls.push(url)
 			}
+			const gallery = [...existingGallery, ...uploadedUrls]
+			// image_url = pierwsze zdjęcie z galerii — to pole nadal czytają
+			// CatalogGrid.jsx, Hero/CatalogGrid.jsx, Products.jsx i lista w Admin,
+			// które nie wiedzą jeszcze o kolumnie gallery.
+			const primaryImage = gallery[0] || null
 
 			const payload = {
 				id,
@@ -284,7 +340,8 @@ class AdminBase extends Component {
 				old_price_pln: formData.old_price_pln === '' ? null : parseFloat(formData.old_price_pln) || null,
 				stock_quantity: parseInt(formData.stock_quantity, 10) || 0,
 				unit: formData.unit || 'szt.',
-				image_url: imageUrl || null,
+				image_url: primaryImage,
+				gallery: gallery.length ? gallery : null,
 				is_active: formData.is_active,
 				gender: parseList(formData.gender),
 				season: formData.season || null,
@@ -537,7 +594,7 @@ class AdminBase extends Component {
 	}
 
 	renderForm() {
-		const { formData, editingProduct, imagePreview, saving, saveError } = this.state
+		const { formData, editingProduct, existingGallery, newImagePreviews, saving, saveError } = this.state
 
 		return (
 			<>
@@ -658,11 +715,47 @@ class AdminBase extends Component {
 					</label>
 
 					<label className={css.field}>
-						<span>Zdjęcie</span>
-						<input type='file' accept='image/*' onChange={this.handleImageChange} />
+						<span>Zdjęcia (możesz wybrać kilka naraz)</span>
+						<input type='file' accept='image/*' multiple onChange={this.handleImagesChange} />
 					</label>
 
-					{imagePreview && <img src={imagePreview} alt='Podgląd' className={css.imagePreview} />}
+					{(existingGallery.length > 0 || newImagePreviews.length > 0) && (
+						<div className={css.imageGallery}>
+							{existingGallery.map((url, i) => (
+								<div key={`existing-${i}`} className={css.imageGalleryItem}>
+									<img src={url} alt={`Zdjęcie ${i + 1}`} className={css.imagePreview} />
+									<button
+										type='button'
+										className={css.imageRemoveBtn}
+										onClick={() => this.removeExistingImage(i)}
+										aria-label='Usuń zdjęcie'
+									>
+										×
+									</button>
+									{i === 0 && <span className={css.imagePrimaryBadge}>Główne</span>}
+								</div>
+							))}
+							{newImagePreviews.map((url, i) => (
+								<div key={`new-${i}`} className={css.imageGalleryItem}>
+									<img src={url} alt={`Nowe zdjęcie ${i + 1}`} className={css.imagePreview} />
+									<button
+										type='button'
+										className={css.imageRemoveBtn}
+										onClick={() => this.removeNewImage(i)}
+										aria-label='Usuń zdjęcie'
+									>
+										×
+									</button>
+									{existingGallery.length === 0 && i === 0 && (
+										<span className={css.imagePrimaryBadge}>Główne</span>
+									)}
+								</div>
+							))}
+						</div>
+					)}
+					<p className={css.formHint}>
+						Pierwsze zdjęcie na liście jest zdjęciem głównym — to ono widoczne jest na liście produktów, w katalogu i na stronie głównej.
+					</p>
 
 					{saveError && <p className={css.errorText}>Błąd: {saveError}</p>}
 

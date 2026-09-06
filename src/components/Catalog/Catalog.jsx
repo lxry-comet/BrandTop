@@ -64,8 +64,12 @@ export class Catalog extends Component {
 		error: null,
 		visibleCount: visibleProductsCount,
 		category: new URLSearchParams(window.location.search).get('type'),
+		// z wyszukiwarki w Header.jsx (Header.jsx → submitSearch → /catalog?search=...)
+		search: new URLSearchParams(window.location.search).get('search') || '',
 
-		filterPanelOpen: false,
+		// otwieramy panel filtrów od razu, jeśli przyszliśmy z linku z markę
+		// (np. z BrandStrip) — żeby było od razu widać, że marka jest zaznaczona
+		filterPanelOpen: !!new URLSearchParams(window.location.search).get('brand'),
 
 		// "Pokaż dostępne" — istniejąca funkcja: produkt musi mieć realny rozmiar
 		// na stanie ORAZ realne zdjęcie w public/image/. availableIds liczymy raz
@@ -78,11 +82,28 @@ export class Catalog extends Component {
 		maxPrice: null,
 		priceBounds: { min: 0, max: 0 },
 
-		...EMPTY_FILTERS
+		...EMPTY_FILTERS,
+
+		// nadpisuje selectedBrands z EMPTY_FILTERS, jeśli w URL jest ?brand=...
+		// (link z BrandStrip.jsx) — dzięki temu chip marki jest zaznaczony
+		// od razu przy wejściu na stronę, bez dodatkowego kliku.
+		selectedBrands: (() => {
+			const brand = new URLSearchParams(window.location.search).get('brand')
+			return brand ? [brand] : EMPTY_FILTERS.selectedBrands
+		})()
 	}
 
 	toggleFilterPanel = () => {
 		this.setState(prev => ({ filterPanelOpen: !prev.filterPanelOpen }))
+	}
+
+	// Usuwa parametr ?search z URL (zachowując ewentualny ?type) i czyści
+	// stan — link "Wyczyść wyszukiwanie" pod tytułem strony.
+	clearSearch = () => {
+		const { category } = this.state
+		const newQuery = category ? `?type=${encodeURIComponent(category)}` : ''
+		window.history.replaceState(null, '', `${window.location.pathname}${newQuery}`)
+		this.setState({ search: '', visibleCount: visibleProductsCount })
 	}
 
 	componentDidMount() {
@@ -226,10 +247,13 @@ export class Catalog extends Component {
 		const {
 			data, showAvailableOnly, availableIds, saleOnly,
 			selectedGenders, selectedBrands, selectedSizes, selectedSeasons,
-			selectedTypes, selectedKinds, selectedColors, maxPrice
+			selectedTypes, selectedKinds, selectedColors, maxPrice, search
 		} = this.state
 
+		const searchTerm = search.trim().toLowerCase()
+
 		return data.filter(p => {
+			if (searchTerm && !(p.name || '').toLowerCase().includes(searchTerm)) return false
 			if (showAvailableOnly && availableIds && !availableIds.has(p.id)) return false
 			if (saleOnly && !p.oldPrice) return false
 			if (selectedGenders.length && !selectedGenders.some(g => p.gender.includes(g))) return false
@@ -272,7 +296,7 @@ export class Catalog extends Component {
 	render() {
 		const {
 			loading, error, checkingAvailability, showAvailableOnly, filterPanelOpen,
-			category, saleOnly, maxPrice, priceBounds
+			category, saleOnly, maxPrice, priceBounds, search
 		} = this.state
 
 		const filtered = this.getFilteredProducts()
@@ -300,11 +324,22 @@ export class Catalog extends Component {
 						<Link to="/" className={css.catalog_btn}>
 							← Strona główna
 						</Link>
-						<h3 className={css.catalog_title}>Wszystkie produkty</h3>
+						<h3 className={css.catalog_title}>
+							{search ? 'Wyniki wyszukiwania' : 'Wszystkie produkty'}
+						</h3>
 						<button className={css.catalog_FilterBtn} onClick={this.toggleFilterPanel}>
 							Filtry{activeFilterCount > 0 ? ` (${activeFilterCount})` : ''}
 						</button>
 					</div>
+
+					{search && (
+						<p className={css.searchInfo}>
+							Szukana fraza: <strong>{search}</strong>
+							<span className={css.searchClear} onClick={this.clearSearch}>
+								Wyczyść wyszukiwanie
+							</span>
+						</p>
+					)}
 
 					{loading && <p>Ładowanie produktów...</p>}
 					{error && <p>Błąd wczytywania produktów: {error.message}</p>}

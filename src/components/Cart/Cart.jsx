@@ -76,6 +76,7 @@ export class Cart extends Component {
 
 		try {
 			await updateCartItemQuantity(item.id, nextQty)
+			window.dispatchEvent(new Event('brandtop:cart-updated'))
 		} catch (error) {
 			this.setState({ cartItems: prevItems, error: error?.message || 'Nie udało się zaktualizować ilości.' })
 		}
@@ -87,6 +88,7 @@ export class Cart extends Component {
 
 		try {
 			await removeCartItem(item.id)
+			window.dispatchEvent(new Event('brandtop:cart-updated'))
 		} catch (error) {
 			this.setState({ cartItems: prevItems, error: error?.message || 'Nie udało się usunąć produktu z koszyka.' })
 		}
@@ -104,6 +106,16 @@ export class Cart extends Component {
 
 	openAuthAlert = () => this.setState({ authAlertOpen: true })
 	closeAuthAlert = () => this.setState({ authAlertOpen: false })
+
+	// Klik na wiersz (poza przyciskami ilości/usuwania) otwiera stronę produktu
+	// z parametrem ?cartItemId=... — ProductPage.jsx po tym pozna, że rozmiar
+	// wybrany na tej stronie ma zaktualizować TĘ konkretną pozycję koszyka
+	// (automatyczny zapis), a nie dodać nową.
+	handleRowClick = (item) => {
+		const productId = item.product?.id
+		if (!productId) return
+		this.props.navigate(`/product/${productId}?cartItemId=${item.id}`)
+	}
 
 	handleAuthSuccess = (user) => {
 		this.setState({ authAlertOpen: false, user }, () => this.loadCart(user.id))
@@ -184,7 +196,19 @@ export class Cart extends Component {
 							const lineTotal = unitPrice * (item.quantity || 1)
 
 							return (
-								<div className={css.cart_row} key={item.id}>
+								<div
+									className={css.cart_row}
+									key={item.id}
+									onClick={() => this.handleRowClick(item)}
+									role="button"
+									tabIndex={0}
+									onKeyDown={(e) => {
+										if (e.key === 'Enter' || e.key === ' ') {
+											e.preventDefault()
+											this.handleRowClick(item)
+										}
+									}}
+								>
 									<img
 										src={productImage(product)}
 										alt={product.name}
@@ -198,14 +222,18 @@ export class Cart extends Component {
 											{product.brand}
 											{item.size ? ` · Rozmiar: ${item.size}` : ''}
 											<span className={css.qty_control}>
-												<button onClick={() => this.handleChangeQty(item, -1)}>−</button>
+												<button onClick={(e) => { e.stopPropagation(); this.handleChangeQty(item, -1) }}>−</button>
 												<span>{item.quantity || 1}</span>
-												<button onClick={() => this.handleChangeQty(item, 1)}>+</button>
+												<button onClick={(e) => { e.stopPropagation(); this.handleChangeQty(item, 1) }}>+</button>
 											</span>
 										</div>
 									</div>
 									<div className={css.cart_itemPrice}>{lineTotal} zł</div>
-									<button className={css.rm_btn} onClick={() => this.handleRemove(item)} title="Usuń z koszyka">
+									<button
+										className={css.rm_btn}
+										onClick={(e) => { e.stopPropagation(); this.handleRemove(item) }}
+										title="Usuń z koszyka"
+									>
 										✕
 									</button>
 								</div>

@@ -13,7 +13,7 @@ import React, { Component, useEffect, useRef } from 'react'
 import css from './App.module.css'
 
 //? imports components
-import {Header} from '@/components/Header/Header.jsx';
+import Header from '@/components/Header/Header.jsx';
 import {BrandStrip} from '@/components/BrandStrip/BrandStrip.jsx';
 import {Hero} from '@/components/Hero/Hero.jsx'
 import {Footer} from '@/components/Footer/Footer.jsx'
@@ -24,7 +24,7 @@ import {Contacts} from '@/components/Contacts/Contacts.jsx'
 import {Catalog} from '@/components/Catalog/Catalog.jsx'
 import CheckoutSuccess from '@/components/CheckoutSuccess/CheckoutSuccess.jsx'
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom'
-import {Wideo} from '@/components/Wideo/Wideo.jsx'
+// import {Wideo} from '@/components/Wideo/Wideo.jsx'
 import CartWithNavigate from '@/components/Cart/CartWithNavigate.jsx'
 import {Favorites} from '@/components/Favorites/Favorites.jsx'
 import {AuthModal} from '@/components/AuthModal/AuthModal.jsx'
@@ -79,7 +79,7 @@ function AppRoutes({ user, authLoading }) {
 			<Route path='/account' element={<Account/>}/>
 			{/* <Route path='/bestsellers' element={<Bestsellers/>}/> */}
 			{/* <Route path='/newproducts' element={<Newproducts/>}/> */}
-			<Route path='/wideo' element={<Wideo/>}/>
+			{/* <Route path='/wideo' element={<Wideo/>}/> */}
 			<Route path='/cart' element={<CartWithNavigate/>}/>
 			<Route path='/checkout' element={<CheckoutWithNavigate/>}/>
 			<Route path='/checkout/sukces' element={<CheckoutSuccess/>}/>

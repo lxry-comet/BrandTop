@@ -136,7 +136,10 @@
 	object-fit: cover;
 	border-radius: var(--radius-lg, 18px);
 	background: #444;
-	border: 2px solid #444;
+	/* Wcześniej #444 (ciemnoszary) — praktycznie niewidoczny, zwłaszcza na
+	   jasnym tle zdjęcia produktu. Kolor akcentu wyraźnie ramkuje aktualnie
+	   wybrane zdjęcie, spójnie z podświetleniem aktywnej miniaturki (.thumbActive). */
+	border: 2px solid var(--accent, #ff5e00);
 	transition: 0.28s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -152,14 +155,16 @@
 		flex-wrap: nowrap;
 		width: 64px;
 		flex-shrink: 0;
-		max-height: 520px;
-		overflow-y: auto;
+		/* Bez max-height/overflow: przy realistycznej liczbie zdjęć (kilka)
+		   kolumna po prostu rośnie w dół — nic nigdy się nie utnie i nie ma
+		   potrzeby scrollowania ani natywnego paska przewijania. */
 	}
 }
 
 .thumb {
 	width: 56px;
 	height: 56px;
+	box-sizing: border-box;
 	object-fit: cover;
 	border-radius: var(--radius-sm, 10px);
 	cursor: pointer;
@@ -180,7 +185,10 @@
 .thumbActive {
 	border-color: var(--accent, #ff5e00);
 	opacity: 1;
-	transform: scale(1.05);
+	/* Bez transform: scale — powiększenie wypychało zdjęcie poza wąską
+	   (64px) kolumnę miniaturek i obcinało pomarańczową ramkę. Sama zmiana
+	   koloru ramki + opacity w zupełności wystarcza, żeby wyróżnić wybraną
+	   miniaturkę, bez ryzyka wyjścia poza kontener. */
 }
 
 .galleryActions {
@@ -351,6 +359,38 @@
 	color: #bbb;
 	font-size: 14px;
 	line-height: 1.6;
+}
+
+/* ==================== EDYCJA POZYCJI KOSZYKA ==================== */
+
+.cartEditNotice {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	background: rgba(255, 94, 0, 0.12);
+	border: 1px solid rgba(255, 94, 0, 0.4);
+	border-radius: 12px;
+	padding: 10px 14px;
+	font-size: 13px;
+	color: #ffd9b8;
+	margin-bottom: 4px;
+}
+
+.cartEditBackBtn {
+	background: none;
+	border: none;
+	color: var(--accent, #ff5e00);
+	font-weight: 700;
+	font-size: 13px;
+	text-decoration: underline;
+	cursor: pointer;
+	padding: 0;
+	white-space: nowrap;
+}
+.cartEditBackBtn:hover {
+	filter: brightness(1.15);
 }
 
 /* ==================== SIZES ==================== */

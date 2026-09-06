@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient.js'
 import { addToCart, toggleFavorite } from '@/lib/favoritesCartService.js'
 import { AuthModal } from '@/components/AuthModal/AuthModal.jsx'
@@ -62,6 +62,21 @@ function buildSpecs(product) {
 	return specs
 }
 
+// Niektóre rekordy w bazie mają markę wpisaną na sztywno na początku pola
+// `name` (np. name = "Air Jordan Buty Air Jordan 1 KO Syracuse", brand =
+// "Air Jordan") — wcześniejszy render `{product.brand} {product.name}`
+// zawsze doklejał markę drugi raz. Ta funkcja sprawdza (bez rozróżniania
+// wielkości liter), czy `name` już zaczyna się od `brand`, i jeśli tak,
+// wyświetla samo `name`.
+function buildTitle(product) {
+	const brand = (product.brand || '').trim()
+	const name = (product.name || '').trim()
+	if (brand && name.toLowerCase().startsWith(brand.toLowerCase())) {
+		return name
+	}
+	return [brand, name].filter(Boolean).join(' ')
+}
+
 const ADD_TO_CART_NOTICE = 'Zaloguj się lub załóż konto, aby dodać produkt do koszyka.'
 const ADD_TO_FAVORITES_NOTICE = 'Zaloguj się lub załóż konto, aby dodać produkt do ulubionych.'
 
@@ -83,12 +98,33 @@ class ProductPage extends Component {
 		// Który przycisk otworzył AuthModal — po zalogowaniu trzeba dokończyć
 		// dokładnie tę akcję (dodanie do koszyka albo do ulubionych), a nie zawsze koszyk.
 		authIntent: 'cart',
+		// Tryb edycji pozycji koszyka (this.props.cartItemId ustawione) —
+		// '' | 'saving' | 'saved'; błąd zapisu trzymamy osobno w cartEditError.
+		cartEditStatus: '',
+		cartEditError: '',
 	}
 
 	componentDidMount() {
 		this.fetchProduct()
 		this.loadUserAndFavoriteStatus()
+		this.loadCartItemSize()
 		window.scrollTo({ top: 0, behavior: 'smooth' })
+	}
+
+	// Gdy strona otwarta jest z koszyka (?cartItemId=...), pobiera aktualnie
+	// zapisany rozmiar tej pozycji, żeby selektor od razu pokazywał to, co
+	// faktycznie jest w koszyku (a nie zawsze pierwszy dostępny rozmiar).
+	loadCartItemSize = async () => {
+		const { cartItemId } = this.props
+		if (!cartItemId) return
+
+		const { data, error } = await supabase
+			.from('cart_items')
+			.select('size')
+			.eq('id', cartItemId)
+			.maybeSingle()
+
+		if (!error && data) this.setState({ selectedSize: data.size })
 	}
 
 	// Sprawdza, czy ten produkt jest już w ulubionych zalogowanego usera —
@@ -140,6 +176,38 @@ class ProductPage extends Component {
 	handleSelectSize = (sizeEntry) => {
 		if (!sizeEntry.stock) return
 		this.setState({ selectedSize: sizeEntry.size, sizeWarning: false })
+
+		// Otwarte z koszyka — zmiana rozmiaru od razu zapisuje się w TEJ
+		// pozycji koszyka, bez potrzeby klikania "Dodaj do koszyka" ponownie
+		// (np. klient wybrał zły rozmiar i chce go poprawić).
+		if (this.props.cartItemId) {
+			this.saveCartItemSize(sizeEntry.size)
+		}
+	}
+
+	saveCartItemSize = async (newSize) => {
+		const { cartItemId } = this.props
+		this.setState({ cartEditStatus: 'saving', cartEditError: '' })
+
+		try {
+			const { error } = await supabase
+				.from('cart_items')
+				.update({ size: newSize })
+				.eq('id', cartItemId)
+
+			if (error) throw error
+
+			this.setState({ cartEditStatus: 'saved' })
+			// Odświeża licznik w Header.jsx (na wszelki wypadek — ilość się nie
+			// zmienia, ale to samo zdarzenie, na które Header już nasłuchuje).
+			window.dispatchEvent(new Event('brandtop:cart-updated'))
+			setTimeout(() => this.setState({ cartEditStatus: '' }), 1600)
+		} catch (error) {
+			this.setState({
+				cartEditStatus: '',
+				cartEditError: error?.message || 'Nie udało się zapisać zmiany rozmiaru.'
+			})
+		}
 	}
 
 	// Wcześniej to był czysto lokalny toggle (this.setState liked: !liked)) —
@@ -190,6 +258,9 @@ class ProductPage extends Component {
 		try {
 			await addToCart(user.id, product.id, selectedSize, 1)
 			this.setState({ addingToCart: false, added: true, userId: user.id })
+			// Powiadamia Header.jsx (licznik przy ikonie koszyka), że koszyk się
+			// zmienił — Header nasłuchuje tego zdarzenia globalnie (patrz Header.jsx).
+			window.dispatchEvent(new Event('brandtop:cart-updated'))
 			setTimeout(() => this.setState({ added: false }), 1600)
 		} catch (error) {
 			this.setState({ addingToCart: false, cartError: error?.message || 'Nie udało się dodać produktu do koszyka.' })
@@ -209,10 +280,10 @@ class ProductPage extends Component {
 	}
 
 	render() {
-		const { navigate } = this.props
+		const { navigate, cartItemId } = this.props
 		const {
 			product, loading, error, mainImageIndex, selectedSize, sizeWarning, liked, favError,
-			added, addingToCart, cartError, authAlertOpen, authIntent,
+			added, addingToCart, cartError, authAlertOpen, authIntent, cartEditStatus, cartEditError,
 		} = this.state
 
 		if (loading) {
@@ -290,7 +361,21 @@ class ProductPage extends Component {
 					</div>
 
 					<div className={css.productInfo}>
-						<h2>{product.brand} {product.name}</h2>
+						{cartItemId && (
+							<div className={css.cartEditNotice}>
+								<span>
+									Edytujesz pozycję w koszyku — wybierz inny rozmiar, aby zapisać zmianę.
+									{cartEditStatus === 'saving' && ' Zapisywanie…'}
+									{cartEditStatus === 'saved' && ' ✓ Zapisano'}
+								</span>
+								<button className={css.cartEditBackBtn} onClick={() => navigate('/cart')}>
+									← Wróć do koszyka
+								</button>
+							</div>
+						)}
+						{cartEditError && <div className={css.sizeWarning}>{cartEditError}</div>}
+
+						<h2>{buildTitle(product)}</h2>
 
 						{hasDiscount ? (
 							<div className={css.price}>
@@ -382,9 +467,14 @@ class ProductPage extends Component {
 export function ProductPageRoute() {
 	const { id } = useParams()
 	const navigate = useNavigate()
+	// ?cartItemId=... dokłada Cart.jsx przy kliknięciu w wiersz koszyka —
+	// mówi ProductPage, że zmiana rozmiaru ma zaktualizować TĘ pozycję
+	// koszyka (automatyczny zapis), a nie dodać nowy produkt.
+	const [searchParams] = useSearchParams()
+	const cartItemId = searchParams.get('cartItemId')
 	// key={id} примушує компонент повністю перемонтуватись і перезавантажити дані,
 	// коли зі сторінки товару переходиш на інший товар (той самий трюк, що й з Catalog key={location.search})
-	return <ProductPage key={id} id={id} navigate={navigate} />
+	return <ProductPage key={id} id={id} navigate={navigate} cartItemId={cartItemId} />
 }
 
 export default ProductPageRoute

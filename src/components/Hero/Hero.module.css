@@ -3,6 +3,11 @@
 	margin: 4px auto 28px;
 	padding: 0;
 }
+@media (max-width: 640px) {
+	.hero__bannerwrap {
+		margin: 4px auto 18px;
+	}
+}
 .hero__bannerlink {
 	display: block;
 	position: relative;
@@ -15,12 +20,27 @@
 		0 6px 18px rgba(0, 0, 0, 0.35);
 	transition: var(--transition-smooth);
 }
+@media (max-width: 640px) {
+	.hero__bannerlink {
+		border-radius: 16px;
+	}
+}
 .hero__bannerlink img {
 	width: 100%;
 	height: auto;
 	max-height: 400px;
 	object-fit: cover;
 	display: block;
+}
+@media (max-width: 640px) {
+	.hero__bannerlink img {
+		max-height: 200px;
+	}
+}
+@media (max-width: 400px) {
+	.hero__bannerlink img {
+		max-height: 160px;
+	}
 }
 .hero__bannertext {
 	position: absolute;
@@ -40,6 +60,31 @@
 	white-space: nowrap;
 	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 	z-index: 2;
+	/* Na wąskich ekranach 36px + nowrap + duży padding nie mieściły się w
+	   szerokości banera i tekst "wypływał" poza obramowanie (widoczne na
+	   telefonie). max-width + box-sizing pozwalają tekstowi się zawinąć,
+	   a media queries poniżej skalują font/padding w dół stopniowo. */
+	max-width: 92%;
+	box-sizing: border-box;
+	white-space: normal;
+	line-height: 1.15;
+}
+@media (max-width: 640px) {
+	.hero__bannertext {
+		font-size: 22px;
+		letter-spacing: 1.2px;
+		padding: 10px 18px;
+		border-width: 2px;
+		border-radius: 10px;
+		max-width: 90%;
+	}
+}
+@media (max-width: 400px) {
+	.hero__bannertext {
+		font-size: 17px;
+		letter-spacing: 0.6px;
+		padding: 8px 14px;
+	}
 }
 .hero__bannertext::after {
 	content: '';

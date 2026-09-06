@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 //? imports styles
 import css from './BrandStrip.module.css'
@@ -13,7 +14,7 @@ export class BrandStrip extends Component {
 
 		//! [2] Блок обчислювальних дaних
 
-		const brandStripName = ['Adidas', 'Nike', 'Vans', 'PitBull', 'Puma', 'Reebook', 'Jordan', 'Asics', 'Salomon', 'Converse', 'New Balance']
+		const brandStripName = ['Adidas', 'Nike', 'Ground Game', 'Pit Bull', 'Air Jordan', 'MKS Flota Swinoujscie', 'New Balance']
 
 		//! [3] Блок консолей необхідних даних
 
@@ -21,10 +22,20 @@ export class BrandStrip extends Component {
 			<>
 				<div className={css.brandstrip}>
 					<div className={css.brandstrip__track}>
-						{/* Duplikujemy listę 2x, żeby animacja mogła płynnie się zapętlić */}
-						{[...brandStripName, ...brandStripName].map((name, index) => (
+						{/* Duplikujemy listę 4x (nie 2x) — przy 2x na bardzo szerokich
+						ekranach jedna kopia bywa węższa niż viewport, przez co tuż
+						przed zapętleniem widać pustą przestrzeń zanim animacja
+						"skoczy" z powrotem na start. 4 kopie dają zapas treści,
+						a translateX w CSS jest przeliczony tak, żeby prędkość
+						przewijania zostawała identyczna. */}
+						{[...brandStripName, ...brandStripName, ...brandStripName, ...brandStripName].map((name, index) => (
 							<React.Fragment key={`${name}-${index}`}>
-								<div className={css.brandstrip__name}>{name}</div>
+								<Link
+									to={`/catalog?type=obuwie&brand=${encodeURIComponent(name)}`}
+									className={css.brandstrip__name}
+								>
+									{name}
+								</Link>
 								<div className={css.brandstrip__sep}>●</div>
 							</React.Fragment>
 						))}

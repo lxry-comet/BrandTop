@@ -10,5 +10,7 @@ export default defineConfig({
 			'@': path.resolve(__dirname, 'src')
 		}
 	},
-	base: '/BrandTop/'
+	// Netlify serwuje z korzenia domeny (nie z podfolderu jak GitHub Pages),
+	// więc base zawsze '/' — niezależnie od env/trybu builda.
+	base: '/'
 })

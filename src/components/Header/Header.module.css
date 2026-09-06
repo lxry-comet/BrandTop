@@ -29,6 +29,10 @@
 }
 .header__logo{
   padding-left: 12px;
+  /* było div, teraz Link — reset domyślnych stylów <a> */
+  text-decoration: none;
+  cursor: pointer;
+  display: block;
 }
 .logo__text{
 	position: relative;
@@ -102,6 +106,34 @@
   transform: scale(1.12);
   box-shadow: 0 8px 22px var(--accent-glow);
 }
+.cartBadge {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	min-width: 17px;
+	height: 17px;
+	padding: 0 4px;
+	border-radius: 999px;
+	background: var(--accent);
+	color: #ffffff;
+	font-size: 10.5px;
+	font-weight: 800;
+	line-height: 17px;
+	text-align: center;
+	box-shadow: 0 0 0 2px #222222;
+	pointer-events: none;
+}
+.loggedInDot {
+	position: absolute;
+	bottom: 6px;
+	right: 6px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #4ade80;
+	box-shadow: 0 0 0 2px #222222;
+	pointer-events: none;
+}
 /* ===================== */
 .header__search{
 	background: #222222;
@@ -151,6 +183,19 @@
   font-size: 16px;
   flex-shrink: 0;
   user-select: none;
+  /* było <span>, teraz <button> (żeby klik odpalał wyszukiwanie) —
+     reset domyślnych stylów przycisku */
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+.search__icon:hover{
+  color: var(--accent);
 }
 .nav__link{
 	padding: 8px 14px;

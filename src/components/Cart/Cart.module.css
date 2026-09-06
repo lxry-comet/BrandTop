@@ -234,6 +234,11 @@
 	transition: all 0.2s ease;
 	gap: 14px;
 	flex-wrap: wrap;
+	cursor: pointer;
+}
+.cart_row:hover {
+	border-color: var(--accent);
+	background: #333333;
 }
 
 .cart_row img {
@@ -339,8 +344,6 @@
 	.section_title { font-size: 20px; }
 	.back_btn { font-size: 12px; padding: 8px 14px; align-self: flex-start;}
 }
-
-/* ==================== TOTAL / CHECKOUT ==================== */
 .cart_total {
 	text-align: right;
 	font-weight: 900;

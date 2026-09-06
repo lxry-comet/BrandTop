@@ -29,6 +29,16 @@
 	text-transform: uppercase;
 	font-size: 18px;
 	padding: 0 24px;
+
+	/* było div, teraz Link — trzeba zresetować domyślne style <a> */
+	text-decoration: none;
+	cursor: pointer;
+	transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.brandstrip__name:hover{
+	color: var(--accent);
+	transform: scale(1.06);
 }
 
 .brandstrip__sep{
@@ -41,7 +51,9 @@
 		transform: translateX(0);
 	}
 	to {
-		/* przesuwamy o połowę szerokości - bo lista jest zduplikowana x2 */
-		transform: translateX(-50%);
+		/* przy 4 kopiach listy 1/4 (25%) szerokości całego paska to dokładnie
+		   szerokość jednej kopii — ten sam dystans i prędkość co wcześniej
+		   przy 2 kopiach i -50%, tylko z zapasem treści na szerokich ekranach */
+		transform: translateX(-25%);
 	}
 }

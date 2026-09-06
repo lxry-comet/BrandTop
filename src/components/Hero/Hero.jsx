@@ -68,8 +68,14 @@ export class Hero extends Component {
 		return (
 			<>
 				<div className={css.products}>
-					<div className={css.catalogWrapper}>
-						<h3 className={css.catalog_title}>O b u w i e</h3>
+					<div className={css.hero__bannerwrap}>
+						<Link to="/catalog?type=obuwie" className={css.hero__bannerlink} title="Obuwie sportowe">
+							<img
+								src="https://images.unsplash.com/photo-1552346154-21d32810aba3?w=1300&h=400&fit=crop"
+								alt="Obuwie sportowe"
+							/>
+							<div className={css.hero__bannertext}>Obuwie sportowe</div>
+						</Link>
 					</div>
 
 					{loading && <p>Ładowanie produktów...</p>}
