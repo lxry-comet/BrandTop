@@ -511,6 +511,8 @@
 		background: transparent;
 		border: none;
 		backdrop-filter: none;
+		backdrop-filter: blur(12px);
+  	background: #ffffff0a;
 	}
 	.table thead {
 		display: none;
