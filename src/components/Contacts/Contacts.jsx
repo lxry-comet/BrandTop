@@ -91,8 +91,8 @@ export class Contacts extends Component {
 							<div className={css.contacts__phoneblock}>
 								<span className={css.contacts__phoneicon}>📞</span>
 								<div>
-									<a href='tel:+48123456789' className={css.contacts__phonenumber}>
-										+48 123 456 789
+									<a href='tel:+48502725148' className={css.contacts__phonenumber}>
+										+48 502 725 148
 									</a>
 									<div className={css.contacts__phonehint}>zadzwoń lub wyślij SMS</div>
 								</div>
