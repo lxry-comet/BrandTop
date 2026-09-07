@@ -557,15 +557,15 @@ class AdminBase extends Component {
 												<div className={css.thumbPlaceholder} />
 											)}
 										</td>
-										<td>{product.name}</td>
-										<td>
+										<td data-label='Nazwa'>{product.name}</td>
+										<td data-label='Klasa'>
 											<span className={css.badge}>
 												{TYPE_OPTIONS.find(t => t.value === product.type)?.label || product.type}
 											</span>
 										</td>
-										<td>{product.price_pln} zł</td>
-										<td>{product.stock_quantity}</td>
-										<td>
+										<td data-label='Cena'>{product.price_pln} zł</td>
+										<td data-label='Stan'>{product.stock_quantity}</td>
+										<td data-label='Status'>
 											<span className={product.is_active ? css.statusActive : css.statusInactive}>
 												{product.is_active ? 'Aktywny' : 'Ukryty'}
 											</span>
@@ -836,13 +836,13 @@ class AdminBase extends Component {
 
 									return (
 										<tr key={order.id}>
-											<td>
+											<td data-label='Zamówienie'>
 												<div style={{ fontWeight: 700 }}>#{order.id}</div>
 												<div className={css.muted} style={{ fontSize: 12 }}>
 													{new Date(order.created_at).toLocaleDateString('pl-PL')}
 												</div>
 											</td>
-											<td style={{ fontSize: 13 }}>
+											<td data-label='Produkty' style={{ fontSize: 13 }}>
 												{items.map(item => (
 													<div key={item.id}>
 														{item.products?.name || item.product_id} × {item.quantity}
@@ -850,14 +850,14 @@ class AdminBase extends Component {
 													</div>
 												))}
 											</td>
-											<td>{Number(order.total).toFixed(2)} zł</td>
-											<td style={{ fontSize: 13 }}>
+											<td data-label='Kwota'>{Number(order.total).toFixed(2)} zł</td>
+											<td data-label='Dostawa' style={{ fontSize: 13 }}>
 												{order.shipping_method || '—'}
 												{order.tracking_number && (
 													<div className={css.muted}>nr: {order.tracking_number}</div>
 												)}
 											</td>
-											<td>
+											<td data-label='Status'>
 												<span className={css.badge}>
 													{STATUS_LABELS[order.status] || order.status}
 												</span>
@@ -874,21 +874,13 @@ class AdminBase extends Component {
 													</button>
 												)}
 												{canShip && (
-													<div style={{ display: 'flex', gap: 6 }}>
+													<div className={css.trackingRow}>
 														<input
 															type='text'
 															placeholder='Numer przesyłki'
 															value={trackingInputs[order.id] || ''}
 															onChange={(e) => this.setTrackingInput(order.id, e.target.value)}
-															style={{
-																background: 'rgba(0,0,0,0.3)',
-																border: '1px solid rgba(255,255,255,0.14)',
-																borderRadius: 8,
-																padding: '6px 10px',
-																color: '#fff',
-																fontSize: 12,
-																width: 130
-															}}
+															className={css.trackingInput}
 														/>
 														<button
 															type='button'
@@ -973,7 +965,7 @@ class AdminBase extends Component {
 							<tbody>
 								{admins.map(admin => (
 									<tr key={admin.id}>
-										<td>
+										<td data-label='E-mail'>
 											{admin.email}
 											{admin.id === currentUserId && <span className={css.youBadge}> (Ty)</span>}
 										</td>
