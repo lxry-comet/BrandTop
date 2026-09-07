@@ -36,13 +36,17 @@
 }
 .logo__text{
 	position: relative;
-  height: 100%;
-  width: 200px;
+  height: 44px;
+  /* Było sztywne 200px pod krótszy napis "Brand-Top", potem próba z
+     jednostką ch (calc(20ch + 40px)) — ale ch to szerokość cyfry "0",
+     znacznie węższej niż litery w tak grubym kroju (font-weight: 900)
+     z dodatkowym letter-spacing: 2px, więc dalej się nie mieściło.
+     Konkretna wartość px z zapasem, dobrana pod ten font-size/letter-spacing. */
+  width: 420px;
   overflow: hidden;
   display: flex;
   align-items: center;
   user-select: none;
-  height: 44px;
 }
 .logo__item{
 	position: absolute;
@@ -97,7 +101,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: var(--transition-bounce);
+  /* Było var(--transition-bounce) — inna prędkość niż linki w footerze.
+     Ta sama wartość 0.35s ease co footer__link/footer__socialLink, żeby
+     kółko koszyka/konta/ulubionych farbowało się z identycznym tempem. */
+  transition: background-color 0.35s ease, color 0.35s ease, transform 0.35s ease, box-shadow 0.35s ease;
   position: relative;
 }
 .header__btn:hover {
@@ -214,10 +221,35 @@
   font-family: var(--font);
   min-height: var(--tap-target-min);
   white-space: nowrap;
+  /* Customowe podkreślenie zamiast natywnego text-decoration — pasek
+     w kolorze akcentu, animowany pseudo-elementem ::after poniżej,
+     zamiast cienkiej linii w kolorze tekstu z przeglądarki. */
+  position: relative;
+}
+.nav__link::after{
+	content: '';
+	position: absolute;
+	left: 14px;
+	right: 14px;
+	bottom: 4px;
+	height: 2px;
+	border-radius: 2px;
+	background: var(--accent);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.35s ease;
+}
+.nav__link:hover::after{
+	transform: scaleX(1);
 }
 .nav__link.active {
 background: #ffffff;
   color: #222222;
+}
+/* Aktywny link ma już wyraźne białe tło — dodatkowe podkreślenie byłoby
+   zbędnym szumem wizualnym na tym samym elemencie. */
+.nav__link.active::after{
+	display: none;
 }
 .categoryNav {
   padding: 6px 16px;
@@ -262,7 +294,31 @@ background: #ffffff;
 	transform: translateY(-7px) rotate(-45deg);
 }
 
+@media (max-width: 360px) {
+	.logo__item span {
+		font-size: 12.5px;
+		letter-spacing: 0.3px;
+	}
+	.logo__text {
+		width: 210px;
+	}
+}
+
 @media (max-width: 767px) {
+	.header__logo {
+		padding-left: 4px;
+	}
+	.logo__text {
+		height: 30px;
+		/* Proporcjonalnie do font-size 15px (niżej) — ten sam zapas co na
+		   desktopie, przeliczony w dół razem z mniejszą czcionką. */
+		width: 250px;
+	}
+	.logo__item span {
+		font-size: 15px;
+		letter-spacing: 0.6px;
+	}
+
 	.burger__btn {
 		display: flex;
 	}

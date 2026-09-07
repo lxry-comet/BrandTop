@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient.js'
-import { addToCart, toggleFavorite } from '@/lib/favoritesCartService.js'
+import { addToCart, toggleFavorite, getCart, updateCartItemSize } from '@/lib/favoritesCartService.js'
 import { AuthModal } from '@/components/AuthModal/AuthModal.jsx'
 import css from './ProductPage.module.css'
 
@@ -114,17 +114,21 @@ class ProductPage extends Component {
 	// Gdy strona otwarta jest z koszyka (?cartItemId=...), pobiera aktualnie
 	// zapisany rozmiar tej pozycji, żeby selektor od razu pokazywał to, co
 	// faktycznie jest w koszyku (a nie zawsze pierwszy dostępny rozmiar).
+	// getCart(userId) samo rozpoznaje pozycje gościa (id zaczynające się od
+	// "guest_", z localStorage) i zalogowanego (Supabase) — więc to działa
+	// niezależnie od tego, kto edytuje koszyk.
 	loadCartItemSize = async () => {
 		const { cartItemId } = this.props
 		if (!cartItemId) return
 
-		const { data, error } = await supabase
-			.from('cart_items')
-			.select('size')
-			.eq('id', cartItemId)
-			.maybeSingle()
-
-		if (!error && data) this.setState({ selectedSize: data.size })
+		try {
+			const { data: { user } } = await supabase.auth.getUser()
+			const cartItems = await getCart(user?.id ?? null)
+			const match = cartItems.find((item) => item.id === cartItemId)
+			if (match) this.setState({ selectedSize: match.size })
+		} catch (error) {
+			console.error('Nie udało się pobrać rozmiaru z koszyka:', error)
+		}
 	}
 
 	// Sprawdza, czy ten produkt jest już w ulubionych zalogowanego usera —
@@ -190,12 +194,7 @@ class ProductPage extends Component {
 		this.setState({ cartEditStatus: 'saving', cartEditError: '' })
 
 		try {
-			const { error } = await supabase
-				.from('cart_items')
-				.update({ size: newSize })
-				.eq('id', cartItemId)
-
-			if (error) throw error
+			await updateCartItemSize(cartItemId, newSize)
 
 			this.setState({ cartEditStatus: 'saved' })
 			// Odświeża licznik w Header.jsx (na wszelki wypadek — ilość się nie
@@ -237,6 +236,11 @@ class ProductPage extends Component {
 	// Jeśli nie — otwiera AuthModal ze stylizowanym komunikatem (props.notice) zamiast
 	// standardowego "Zaloguj się" i po udanym logowaniu/rejestracji sam ponawia dodanie
 	// do koszyka (handleAuthSuccess), więc klient nie musi klikać "Dodaj do koszyka" drugi raz.
+	// Dodanie do koszyka działa teraz bez logowania — addToCart(userId, ...)
+	// samo rozpoznaje brak usera i zapisuje pozycję w koszyku gościa
+	// (localStorage, patrz favoritesCartService.js). Logowanie jest wymagane
+	// dopiero przy próbie przejścia do płatności (Cart.jsx → "Przejdź do kasy"),
+	// nie przy samym dodawaniu produktów.
 	handleAddToCart = async () => {
 		const { product, selectedSize } = this.state
 		const sizes = sortSizes(product?.product_sizes)
@@ -250,14 +254,9 @@ class ProductPage extends Component {
 
 		const { data: { user } } = await supabase.auth.getUser()
 
-		if (!user) {
-			this.setState({ addingToCart: false, authAlertOpen: true, authIntent: 'cart' })
-			return
-		}
-
 		try {
-			await addToCart(user.id, product.id, selectedSize, 1)
-			this.setState({ addingToCart: false, added: true, userId: user.id })
+			await addToCart(user?.id ?? null, product.id, selectedSize, 1)
+			this.setState({ addingToCart: false, added: true, userId: user?.id ?? this.state.userId })
 			// Powiadamia Header.jsx (licznik przy ikonie koszyka), że koszyk się
 			// zmienił — Header nasłuchuje tego zdarzenia globalnie (patrz Header.jsx).
 			window.dispatchEvent(new Event('brandtop:cart-updated'))

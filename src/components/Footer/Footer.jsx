@@ -1,8 +1,18 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import { FaInstagram, FaFacebook, FaTiktok } from 'react-icons/fa6'
 
 //? imports styles
 import css from './Footer.module.css'
+
+// Mapa ikon po nazwie platformy — jeśli kiedyś odkomentujesz Facebook/TikTok
+// w socialLinks poniżej, ikona dopasuje się sama zamiast na sztywno pokazywać
+// Instagrama wszędzie.
+const SOCIAL_ICONS = {
+	Instagram: FaInstagram,
+	Facebook: FaFacebook,
+	TikTok: FaTiktok
+}
 
 //? imports components
 
@@ -54,13 +64,13 @@ export class Footer extends Component {
 							{/* Brand + opis + kontakty */}
 							<div className={css.footer__brand}>
 								<div className={css.footer__logo}>
-									BRAND<span className={css.footer__logoAccent}>-TOP</span>
+									BRAND<span className={css.footer__logoAccent}> TOP</span> SNEAKERS
 								</div>
 								<p className={css.footer__text}>
-									• sprzedaż limitowanych sneakersów 👌🏻<br/>
-									• zamówienia składane on line📲<br/>
-									• gwarancja oryginalności 💯<br/>
-									• towar dostępny w sklepie stacjonarnym🤝<br/>
+									• sprzedaż limitowanych sneakersów<br/>
+									• zamówienia składane on line<br/>
+									• gwarancja oryginalności<br/>
+									• towar dostępny w sklepie stacjonarnym<br/>
 								</p>
 								<div className={css.footer__contacts}>
 									<a
@@ -76,7 +86,7 @@ export class Footer extends Component {
 										goadera1@o2.pl
 									</a>
 									<span className={css.footer__contactItem}>
-										Bohaterów Września 80, Świnoujście
+										Bohaterów Września 80/1a, Świnoujście
 									</span>
 								</div>
 							</div>
@@ -107,17 +117,22 @@ export class Footer extends Component {
 								))}
 							</div>
 							<div className={css.footer__social}>
-								{socialLinks.map(social => (
-									<a
-										key={social.name}
-										href={social.href}
-										target={social.href !== '#' ? '_blank' : undefined}
-										rel={social.href !== '#' ? 'noopener noreferrer' : undefined}
-										className={css.footer__socialLink}
-									>
-										{social.name}
-									</a>
-								))}
+								<h4 className={css.footer__title}>MEDIA SPOŁECZNOŚCIOWE</h4>
+								{socialLinks.map(social => {
+									const Icon = SOCIAL_ICONS[social.name]
+									return (
+										<a
+											key={social.name}
+											href={social.href}
+											target={social.href !== '#' ? '_blank' : undefined}
+											rel={social.href !== '#' ? 'noopener noreferrer' : undefined}
+											className={css.footer__socialLink}
+										>
+											{Icon && <Icon className={css.footer__socialIcon} />}
+											{social.name}
+										</a>
+									)
+								})}
 							</div>
 							{/* Płatności i dostawa */}
 							<div className={css.footer__payments}>

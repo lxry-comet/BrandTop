@@ -51,6 +51,7 @@ max-width: 1300px;
 	font-size: 14px;
 	text-decoration: none;
 	width: max-content;
+	transition: color 0.35s ease;
 }
 
 .footer__contactItem:hover{
@@ -80,6 +81,7 @@ max-width: 1300px;
 	font-weight: 600;
 	text-decoration: none;
 	width: max-content;
+	transition: color 0.35s ease;
 }
 
 .footer__link:hover{
@@ -89,15 +91,25 @@ max-width: 1300px;
 /* --- Social media pod obsługą klienta --- */
 .footer__social{
 	display: flex;
-	gap: 20px;
-	margin-top: 8px;
+	flex-direction: column;
+	gap: 14px;
 }
 
 .footer__socialLink{
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 	color: #ffffff;
 	font-size: 14px;
 	font-weight: 700;
 	text-decoration: none;
+	width: max-content;
+	transition: color 0.35s ease;
+}
+
+.footer__socialIcon{
+	font-size: 18px;
+	flex-shrink: 0;
 }
 
 .footer__socialLink:hover{

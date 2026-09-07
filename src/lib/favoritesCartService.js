@@ -15,6 +15,149 @@
 import { supabase } from './supabaseClient';
 
 // ---------------------------------------------------------------------
+// KOSZYK GOŚCIA (niezalogowany klient) — localStorage
+// ---------------------------------------------------------------------
+//
+// Klient bez konta może dodawać produkty do koszyka — trzymamy je w
+// localStorage (RLS w cart_items i tak nie pozwoliłoby zapisać nic bez
+// zalogowania). Dopiero przy próbie przejścia do płatności (Cart.jsx →
+// "Przejdź do kasy") wymagamy logowania/rejestracji, a zaraz po udanym
+// zalogowaniu ten lokalny koszyk zostaje scalony z prawdziwym kontem
+// (mergeGuestCartIntoAccount) i wyczyszczony z przeglądarki.
+//
+// Każda pozycja koszyka gościa ma id w formacie `guest_<productId>_<size>` —
+// dzięki temu updateCartItemQuantity/removeCartItem/updateCartItemSize
+// rozpoznają po samym id, czy operować na localStorage, czy na Supabase,
+// i Cart.jsx/ProductPage.jsx nie muszą wcale wiedzieć, z którym trybem mają
+// do czynienia.
+
+const GUEST_CART_KEY = 'brandtop_guest_cart';
+const GUEST_ID_PREFIX = 'guest_';
+
+function isGuestCartItemId(id) {
+    return typeof id === 'string' && id.startsWith(GUEST_ID_PREFIX);
+}
+
+function buildGuestItemId(productId, size) {
+    return `${GUEST_ID_PREFIX}${productId}_${size ?? 'nosize'}`;
+}
+
+function readGuestCartRaw() {
+    try {
+        const raw = window.localStorage.getItem(GUEST_CART_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch {
+        // Uszkodzony/nieprawidłowy JSON w localStorage — traktujemy jak pusty koszyk,
+        // zamiast wywalać całą stronę błędem parsowania.
+        return [];
+    }
+}
+
+function writeGuestCartRaw(items) {
+    window.localStorage.setItem(GUEST_CART_KEY, JSON.stringify(items));
+    // To samo zdarzenie, na które Header.jsx już nasłuchuje przy koszyku
+    // zalogowanego użytkownika — dzięki temu licznik przy ikonie koszyka
+    // odświeża się identycznie niezależnie od tego, czy ktoś jest zalogowany.
+    window.dispatchEvent(new Event('brandtop:cart-updated'));
+}
+
+function sameGuestLine(item, productId, size) {
+    return item.productId === productId && (item.size ?? null) === (size ?? null);
+}
+
+/** Dodaje produkt do koszyka gościa (localStorage). Ten sam produkt+rozmiar zwiększa quantity. */
+function addToGuestCart(productId, size = null, quantity = 1) {
+    const items = readGuestCartRaw();
+    const existing = items.find((i) => sameGuestLine(i, productId, size));
+
+    if (existing) {
+        existing.quantity += quantity;
+    } else {
+        items.push({ productId, size, quantity });
+    }
+
+    writeGuestCartRaw(items);
+}
+
+function updateGuestCartItemQuantity(guestItemId, quantity) {
+    if (quantity < 1) return removeGuestCartItem(guestItemId);
+
+    const items = readGuestCartRaw().map((item) => {
+        const id = buildGuestItemId(item.productId, item.size);
+        return id === guestItemId ? { ...item, quantity } : item;
+    });
+    writeGuestCartRaw(items);
+}
+
+function updateGuestCartItemSize(guestItemId, size) {
+    const items = readGuestCartRaw().map((item) => {
+        const id = buildGuestItemId(item.productId, item.size);
+        return id === guestItemId ? { ...item, size } : item;
+    });
+    writeGuestCartRaw(items);
+}
+
+function removeGuestCartItem(guestItemId) {
+    const items = readGuestCartRaw().filter(
+        (item) => buildGuestItemId(item.productId, item.size) !== guestItemId
+    );
+    writeGuestCartRaw(items);
+}
+
+function clearGuestCart() {
+    window.localStorage.removeItem(GUEST_CART_KEY);
+    window.dispatchEvent(new Event('brandtop:cart-updated'));
+}
+
+/** Sama liczba sztuk w koszyku gościa — do odznaki przy ikonie koszyka w Header.jsx. */
+export function getGuestCartCount() {
+    return readGuestCartRaw().reduce((sum, item) => sum + (item.quantity || 0), 0);
+}
+
+/** Dociąga dane produktów (nazwa, cena, zdjęcie) do surowych wpisów koszyka gościa. */
+async function getGuestCartWithProducts() {
+    const rawItems = readGuestCartRaw();
+    if (!rawItems.length) return [];
+
+    const ids = [...new Set(rawItems.map((i) => i.productId))];
+    const { data: products, error } = await supabase.from('products').select('*').in('id', ids);
+    if (error) throw error;
+
+    // .filter(Boolean) — jeśli produkt w międzyczasie został usunięty z bazy,
+    // po prostu znika z widoku koszyka zamiast wywalać błędem.
+    return rawItems
+        .map((item) => {
+            const product = products.find((p) => p.id === item.productId);
+            if (!product) return null;
+            return {
+                id: buildGuestItemId(item.productId, item.size),
+                size: item.size,
+                quantity: item.quantity,
+                product
+            };
+        })
+        .filter(Boolean);
+}
+
+/**
+ * Wywołaj zaraz po udanym zalogowaniu/rejestracji (Cart.jsx → handleAuthSuccess) —
+ * przenosi wszystko z koszyka gościa (localStorage) na konto w Supabase,
+ * korzystając z tego samego addToCart() co reszta kodu (więc te same reguły
+ * łączenia duplikatów produkt+rozmiar), i czyści localStorage.
+ */
+export async function mergeGuestCartIntoAccount(userId) {
+    const rawItems = readGuestCartRaw();
+    if (!rawItems.length) return;
+
+    for (const item of rawItems) {
+        await addToCart(userId, item.productId, item.size, item.quantity);
+    }
+
+    clearGuestCart();
+}
+
+// ---------------------------------------------------------------------
 // FAVORITES ("Dodano do ulubionych")
 // ---------------------------------------------------------------------
 
@@ -92,8 +235,13 @@ export async function toggleFavorite(userId, productId) {
 // CART ("Dodać do koszyka")
 // ---------------------------------------------------------------------
 
-/** Zwraca zawartość koszyka usera razem z danymi produktu. */
+/**
+ * Zwraca zawartość koszyka razem z danymi produktu.
+ * Bez userId (gość, niezalogowany) — czyta koszyk z localStorage zamiast Supabase.
+ */
 export async function getCart(userId) {
+    if (!userId) return getGuestCartWithProducts();
+
     const { data, error } = await supabase
         .from('cart_items')
         .select('id, size, quantity, created_at, product:products(*)')
@@ -108,8 +256,11 @@ export async function getCart(userId) {
  * Dodaje produkt do koszyka. Jeśli ten sam produkt+rozmiar już tam jest,
  * zwiększa quantity zamiast tworzyć duplikat (dzięki UNIQUE(user_id, product_id, size)
  * i on conflict poniżej).
+ * Bez userId (gość, niezalogowany) — zapisuje do koszyka w localStorage.
  */
 export async function addToCart(userId, productId, size = null, quantity = 1) {
+    if (!userId) return addToGuestCart(productId, size, quantity);
+
     const { data: existing, error: selectError } = await supabase
         .from('cart_items')
         .select('id, quantity')
@@ -138,6 +289,7 @@ export async function addToCart(userId, productId, size = null, quantity = 1) {
 
 /** Ustawia dokładną ilość danej pozycji koszyka (np. przy zmianie w input +/-). */
 export async function updateCartItemQuantity(cartItemId, quantity) {
+    if (isGuestCartItemId(cartItemId)) return updateGuestCartItemQuantity(cartItemId, quantity);
     if (quantity < 1) return removeCartItem(cartItemId);
 
     const { error } = await supabase
@@ -150,6 +302,8 @@ export async function updateCartItemQuantity(cartItemId, quantity) {
 
 /** Zmiana rozmiaru wybranej pozycji koszyka (odpowiednik updateCartItemSize()). */
 export async function updateCartItemSize(cartItemId, size) {
+    if (isGuestCartItemId(cartItemId)) return updateGuestCartItemSize(cartItemId, size);
+
     const { error } = await supabase
         .from('cart_items')
         .update({ size })
@@ -160,6 +314,8 @@ export async function updateCartItemSize(cartItemId, size) {
 
 /** Usuwa jedną pozycję z koszyka. */
 export async function removeCartItem(cartItemId) {
+    if (isGuestCartItemId(cartItemId)) return removeGuestCartItem(cartItemId);
+
     const { error } = await supabase.from('cart_items').delete().eq('id', cartItemId);
     if (error) throw error;
 }

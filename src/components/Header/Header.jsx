@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient.js'
+import { getGuestCartCount } from '@/lib/favoritesCartService.js'
 
 //? imports styles
 import css from './Header.module.css'
@@ -17,6 +18,63 @@ import CategoryNav from './CategoryNav.jsx'
 // nasłuchuje globalnie i za każdym razem odświeża licznik, bez potrzeby
 // budowania współdzielonego Context/state na poziomie App.jsx.
 const CART_UPDATED_EVENT = 'brandtop:cart-updated'
+
+// Odmiana imienia na wołacz ("Witaj, {imię}!") — polska odmiana ma mnóstwo
+// wyjątków (żeńskie zdrobnienia typu Kasia→Kasiu, ale Anna→Anno; męskie
+// z ruchomym "e" typu Marek→Marku, ale Adam→Adamie), więc to heurystyka
+// pokrywająca najpopularniejsze wzorce, nie w pełni poprawna gramatycznie
+// dla każdego możliwego imienia. Dla nietypowych/rzadkich imion może się
+// pomylić — w takim wypadku zwraca imię bez zmian (bezpieczny fallback)
+// zamiast zgadywać coś ewidentnie złego.
+function toVocative(firstName) {
+	if (!firstName) return null
+	const name = firstName.trim()
+	if (!name) return null
+
+	const lower = name.toLowerCase()
+	const base = name.slice(0, -1)
+	const capitalizeLike = (suffix) => suffix // imię już ma wielką literę na początku, reszta zostaje bez zmian
+
+	// Męskie zdrobnienia z ruchomym "e" przed "k" (Marek, Tomek, Janek) —
+	// "e" znika w odmianie: Marek→Marku, Tomek→Tomku, Janek→Janku.
+	if (/ek$/i.test(name) && name.length > 3) {
+		return name.slice(0, -2) + 'ku'
+	}
+
+	// Żeńskie zdrobnienia na -sia/-zia/-cia/-nia (Kasia, Zosia, Basia, Ania)
+	// → końcówka -a zamienia się na -u, nie na -o jak w pozostałych imionach na -a.
+	if (/(sia|zia|cia|nia)$/i.test(name)) {
+		return base + 'u'
+	}
+
+	// Pozostałe imiona żeńskie kończące się na -a (Anna, Ewa, Magda, Julia,
+	// Kinga) → końcówka -a zamienia się na -o.
+	if (/a$/i.test(name)) {
+		return base + 'o'
+	}
+
+	// Imiona męskie kończące się na spółgłoski syczące/szumiące (Tomasz,
+	// Grzegorz) już są "miękkie" fonetycznie → dodajemy samo -u.
+	if (/(sz|cz|rz|ż|dz)$/i.test(name)) {
+		return name + 'u'
+	}
+
+	// Imiona męskie kończące się na twarde k/g (Dominik, Ludwik) → dodajemy -u.
+	if (/[kg]$/i.test(name)) {
+		return name + 'u'
+	}
+
+	// Domyślny wzorzec dla reszty imion męskich kończących się spółgłoską
+	// (Adam→Adamie, Jan→Janie) — nie uwzględnia rzadszych zmiękczeń
+	// (np. poprawne "Robercie" od "Robert" zamiast "Robertie").
+	if (/[bcćdfhjklłmnńprstwzźż]$/i.test(name)) {
+		return name + 'ie'
+	}
+
+	// Nierozpoznany wzorzec (np. imię kończące się inną samogłoską niż "a")
+	// — bezpieczny fallback: zwracamy imię bez odmiany zamiast zgadywać.
+	return name
+}
 
 export class Header extends Component {
 	state = {
@@ -50,7 +108,10 @@ export class Header extends Component {
 	fetchCartCount = async () => {
 		const { data: { user } } = await supabase.auth.getUser()
 		if (!user) {
-			this.setState({ cartCount: 0 })
+			// Gość może mieć produkty w koszyku (localStorage) — patrz
+			// favoritesCartService.js i Cart.jsx, gdzie logowanie wymagane jest
+			// dopiero przy przejściu do płatności, nie przy samym dodawaniu.
+			this.setState({ cartCount: getGuestCartCount() })
 			return
 		}
 
@@ -135,15 +196,26 @@ export class Header extends Component {
 									<div
 										className={`${css.logo__item} ${!showTitle ? css.active : ''}`}
 									>
+										{/* Explicit {' '} — JSX ucina biały znak, który wypada na
+										przełamaniu linii między tekstem a kolejnym tagiem, więc
+										bez tego "Top" i "Sneakers" sklejały się w jeden wyraz. */}
 										<span>
-											Brand
-											<span className={css.accent}>-Top</span>
+											Brand Top{' '}
+											<span className={css.accent}>Sneakers</span>
 										</span>
 									</div>
 									<div
 										className={`${css.logo__item} ${showTitle ? css.active : ''}`}
 									>
-										<span>Witaj</span>
+										<span>
+											Witaj,{' '}
+											<span className={css.accent}>
+												{this.props.user?.firstName
+													? toVocative(this.props.user.firstName)
+													: 'kliencie'}
+											</span>
+											!
+										</span>
 									</div>
 								</div>
 							</Link>

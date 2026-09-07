@@ -2,12 +2,12 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 
 import { supabase } from '@/lib/supabaseClient.js'
-import { getCart, updateCartItemQuantity, removeCartItem } from '@/lib/favoritesCartService.js'
+import { getCart, updateCartItemQuantity, removeCartItem, mergeGuestCartIntoAccount } from '@/lib/favoritesCartService.js'
 import { AuthModal } from '@/components/AuthModal/AuthModal.jsx'
 import css from './Cart.module.css'
 
 const PLACEHOLDER_IMG = 'https://placehold.co/120x120/1a1a1a/fff?text=Brand-Top'
-const LOGIN_NOTICE = 'Zaloguj się lub załóż konto, aby zobaczyć swój koszyk.'
+const LOGIN_NOTICE = 'Zaloguj się lub załóż konto, aby przejść do płatności.'
 
 function productImage(product) {
 	if (!product) return PLACEHOLDER_IMG
@@ -32,14 +32,10 @@ export class Cart extends Component {
 
 	loadUser = async () => {
 		const { data: { user } } = await supabase.auth.getUser()
-
-		if (!user) {
-			this.setState({ user: null, checkingUser: false })
-			return
-		}
-
-		this.setState({ user, checkingUser: false })
-		this.loadCart(user.id)
+		this.setState({ user: user ?? null, checkingUser: false })
+		// getCart(userId) samo rozpoznaje null jako "gość" i czyta z localStorage —
+		// koszyk wczytuje się zawsze, logowanie wymagane jest dopiero przy checkoutcie.
+		this.loadCart(user?.id ?? null)
 	}
 
 	loadCart = async (userId) => {
@@ -99,8 +95,18 @@ export class Cart extends Component {
 	// a samo zamówienie (orders/order_items) zapisuje dopiero webhook Stripe
 	// PO realnym opłaceniu (patrz stripe-webhook/index.ts). Dzięki temu nie da
 	// się "złożyć zamówienia" bez faktycznej płatności.
+	//
+	// Gość może swobodnie przeglądać i edytować koszyk (patrz getCart/addToCart
+	// w favoritesCartService.js — bez userId czytają/piszą do localStorage),
+	// ale przejście do płatności wymaga konta — dopiero tutaj otwieramy AuthModal.
 	handleGoToCheckout = () => {
 		if (!this.state.cartItems.length) return
+
+		if (!this.state.user) {
+			this.openAuthAlert()
+			return
+		}
+
 		this.props.navigate('/checkout')
 	}
 
@@ -117,8 +123,25 @@ export class Cart extends Component {
 		this.props.navigate(`/product/${productId}?cartItemId=${item.id}`)
 	}
 
-	handleAuthSuccess = (user) => {
-		this.setState({ authAlertOpen: false, user }, () => this.loadCart(user.id))
+	// Po udanym logowaniu/rejestracji z poziomu "Przejdź do kasy": scala
+	// wszystko, co gość zdążył dodać do koszyka w localStorage, z prawdziwym
+	// koszykiem na koncie (mergeGuestCartIntoAccount), i od razu kontynuuje
+	// dokładnie tam, gdzie klient chciał być — na /checkout — bez konieczności
+	// ponownego klikania "Przejdź do kasy".
+	handleAuthSuccess = async (user) => {
+		this.setState({ authAlertOpen: false, user })
+
+		try {
+			await mergeGuestCartIntoAccount(user.id)
+		} catch (error) {
+			// Scalanie się nie udało (np. chwilowy błąd sieci) — nie blokujemy
+			// dalej klienta, ale koszyk może nie zawierać jeszcze pozycji gościa;
+			// loadCart i tak pokaże aktualny, prawdziwy stan konta.
+			console.error('Nie udało się scalić koszyka gościa z kontem:', error)
+		}
+
+		await this.loadCart(user.id)
+		this.props.navigate('/checkout')
 	}
 
 	renderHeader() {
@@ -143,35 +166,6 @@ export class Cart extends Component {
 				<div className={css.content}>
 					{this.renderHeader()}
 					<p className={css.empty_text}>Ładowanie...</p>
-				</div>
-			)
-		}
-
-		if (!user) {
-			return (
-				<div className={css.content}>
-					{this.renderHeader()}
-					<div className={css.loginCard}>
-						<div className={css.loginIconBadge}>
-							<svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-								<path d="M6 6h15l-1.5 9h-12L6 6Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
-								<path d="M6 6 5 3H2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-								<circle cx="9.5" cy="19.5" r="1.5" fill="currentColor"/>
-								<circle cx="17.5" cy="19.5" r="1.5" fill="currentColor"/>
-							</svg>
-						</div>
-						<div className={css.loginTitle}>Zaloguj się, aby zobaczyć koszyk</div>
-						<p className={css.loginText}>{LOGIN_NOTICE}</p>
-						<button className={css.loginBtn} onClick={this.openAuthAlert}>
-							Zaloguj się / Zarejestruj się
-						</button>
-					</div>
-					<AuthModal
-						isOpen={authAlertOpen}
-						onClose={this.closeAuthAlert}
-						onAuthSuccess={this.handleAuthSuccess}
-						notice={LOGIN_NOTICE}
-					/>
 				</div>
 			)
 		}
@@ -246,6 +240,13 @@ export class Cart extends Component {
 						</button>
 					</>
 				)}
+
+				<AuthModal
+					isOpen={authAlertOpen}
+					onClose={this.closeAuthAlert}
+					onAuthSuccess={this.handleAuthSuccess}
+					notice={LOGIN_NOTICE}
+				/>
 			</div>
 		)
 	}

@@ -151,9 +151,11 @@ export class App extends Component {
 		// nie ma jeszcze wiersza dla tego usera (np. świeżo utworzone konto,
 		// albo dane profilu zostały ręcznie usunięte w Supabase). maybeSingle()
 		// w takiej sytuacji po prostu zwraca null zamiast rzucać błąd.
+		// first_name dociągane razem z role — Header.jsx używa go do
+		// spersonalizowanego powitania ("Witaj, {imię}!").
 		const { data, error } = await supabase
 			.from('profiles')
-			.select('role')
+			.select('role, first_name')
 			.eq('id', sessionUser.id)
 			.maybeSingle()
 
@@ -162,7 +164,7 @@ export class App extends Component {
 		}
 
 		this.setState({
-			user: { ...sessionUser, role: data?.role ?? 'customer' },
+			user: { ...sessionUser, role: data?.role ?? 'customer', firstName: data?.first_name ?? null },
 			authLoading: false
 		})
 	}
