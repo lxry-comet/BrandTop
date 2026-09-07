@@ -30,6 +30,7 @@
 	margin-right: 20px;
 	cursor: pointer;
 	border-bottom: 2px solid transparent;
+	flex-shrink: 0;
 	transition:
 		color 0.15s ease,
 		border-color 0.15s ease;
@@ -262,6 +263,28 @@
 	justify-content: flex-end;
 }
 
+.trackingRow {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+.trackingInput {
+	background: rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 8px;
+	padding: 6px 10px;
+	color: #fff;
+	font-size: 12px;
+	width: 130px;
+	flex: 1;
+	min-width: 110px;
+}
+.trackingInput:focus {
+	outline: none;
+	border-color: var(--accent);
+}
+
 /* ---------- Form ---------- */
 
 .form {
@@ -402,8 +425,156 @@
 	.formGrid {
 		grid-template-columns: 1fr;
 	}
+
+	/* ==================== OGÓLNY LAYOUT ==================== */
+	.admin {
+		padding: 16px 12px;
+	}
+	.admin__title {
+		font-size: 19px;
+	}
+
+	/* ==================== ZAKŁADKI — przewijane poziomo ==================== */
+	.tabs {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		flex-wrap: nowrap;
+		margin-bottom: 20px;
+	}
+	.tabs::-webkit-scrollbar {
+		height: 4px;
+	}
+	.tabs::-webkit-scrollbar-thumb {
+		background: rgba(255, 255, 255, 0.25);
+		border-radius: 2px;
+	}
+	.tabs::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	.tab {
+		font-size: 13px;
+		margin-right: 16px;
+		white-space: nowrap;
+	}
+
+	/* ==================== TOOLBAR (tytuł + przycisk akcji) ==================== */
+	.toolbar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 10px;
+		margin-bottom: 18px;
+	}
+	.toolbar .btnPrimary,
+	.toolbar .btnGhost {
+		width: 100%;
+		text-align: center;
+	}
+
+	/* ==================== FILTRY — w kolumnie, pełna szerokość ==================== */
+	.filterBar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 8px;
+	}
+	.searchInput,
+	.filterBar select {
+		width: 100%;
+		min-width: 0;
+	}
+	.resultsCount {
+		text-align: center;
+	}
+
+	/* ==================== FORMULARZ DODAWANIA ADMINA — w kolumnie ==================== */
+	.inlineForm {
+		flex-direction: column;
+		max-width: none;
+	}
+	.inlineForm input,
+	.inlineForm button {
+		width: 100%;
+	}
+
 	.actionsCell {
 		flex-direction: column;
 		align-items: stretch;
+	}
+
+	/* ==================== TABELE → KARTY ====================
+	   Klasyczna technika responsywnych tabel: nagłówek znika, każdy wiersz
+	   staje się osobną "kartą", a etykieta kolumny wraca jako pseudo-element
+	   ::before z atrybutu data-label (patrz Admin.jsx — te same th, co w JSX).
+	   Komórki BEZ data-label (miniaturka zdjęcia, kolumna z przyciskami akcji)
+	   są renderowane bez etykiety — mają własny, dedykowany layout. */
+	.tableWrap {
+		overflow-x: visible;
+		background: transparent;
+		border: none;
+		backdrop-filter: none;
+	}
+	.table thead {
+		display: none;
+	}
+	.table,
+	.table tbody {
+		display: block;
+		width: 100%;
+	}
+	.table tr {
+		display: block;
+		background: rgba(255, 255, 255, 0.04);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+		border-radius: 14px;
+		padding: 14px;
+		margin-bottom: 12px;
+	}
+	.table td {
+		display: block;
+		border-bottom: none;
+		padding: 0;
+	}
+	/* Miniaturka zdjęcia produktu — wyśrodkowana, bez etykiety.
+	   :not([data-label]) gwarantuje, że to dotyczy WYŁĄCZNIE komórki ze
+	   zdjęciem, a nie przypadkiem pierwszej kolumny w tabeli zamówień/adminów
+	   (tam pierwsza kolumna ma już swój data-label i inny układ). */
+	.table td:first-child:not([data-label]) {
+		display: flex;
+		justify-content: center;
+		padding-bottom: 10px;
+	}
+	.table td[data-label] {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 10px;
+		padding: 7px 0;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+		font-size: 13.5px;
+	}
+	.table td[data-label]:last-of-type {
+		border-bottom: none;
+	}
+	.table td[data-label]::before {
+		content: attr(data-label);
+		font-weight: 700;
+		font-size: 10.5px;
+		text-transform: uppercase;
+		letter-spacing: 0.04em;
+		color: rgba(255, 255, 255, 0.45);
+		flex-shrink: 0;
+	}
+	/* Kolumna z przyciskami akcji (Edytuj/Usuń, statusy zamówień) —
+	   już ma własny układ przez .actionsCell, dostaje tylko odstęp od góry. */
+	.table td.actionsCell {
+		display: flex;
+		margin-top: 10px;
+		padding-top: 10px;
+		border-top: 1px solid rgba(255, 255, 255, 0.08);
+	}
+	/* Wiersz "Brak produktów/zamówień/adminów spełniających kryteria" —
+	   pojedyncza komórka na colSpan, bez etykiety, wyśrodkowana. */
+	.table td.muted {
+		text-align: center;
+		padding: 16px 0;
 	}
 }
