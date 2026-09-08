@@ -347,6 +347,7 @@
 }
 
 .deliverySub {
+	display: inline-block;
 	font-size: 13px;
 	color: var(--accent, #ff5e00);
 	font-weight: 700;

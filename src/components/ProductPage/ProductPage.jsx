@@ -393,7 +393,14 @@ class ProductPage extends Component {
 
 						<div className={css.deliveryBlock}>
 							<div className={css.deliveryTitle}>Bezpłatny odbiór</div>
-							<div className={css.deliverySub}>Znajdź sklep</div>
+							<a
+								className={css.deliverySub}
+								href='https://www.google.com/maps/place/Brand-Top/@53.909341,14.2477225,17z/data=!3m1!4b1!4m6!3m5!1s0x47aa5f5ebf4be721:0xa7c591b7c7cba739!8m2!3d53.9093379!4d14.2502974!16s%2Fg%2F11vyrqgzdm?entry=ttu&g_ep=EgoyMDI2MDkwMi4wIKXMDSoASAFQAw%3D%3D'
+								target='_blank'
+								rel='noopener noreferrer'
+							>
+								Znajdź sklep
+							</a>
 						</div>
 
 						{product.description && <p className={css.description}>{product.description}</p>}
