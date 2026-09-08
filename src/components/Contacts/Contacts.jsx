@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { FaPhoneAlt } from 'react-icons/fa'
 
 //? imports styles
 import css from './Contacts.module.css'
@@ -89,7 +90,9 @@ export class Contacts extends Component {
 								<span>lub</span>
 							</div>
 							<div className={css.contacts__phoneblock}>
-								<span className={css.contacts__phoneicon}>📞</span>
+								<span className={css.contacts__phoneicon}>
+									<FaPhoneAlt />
+								</span>
 								<div>
 									<a href='tel:+48502725148' className={css.contacts__phonenumber}>
 										+48 502 725 148
