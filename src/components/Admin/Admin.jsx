@@ -17,6 +17,28 @@ const TYPE_OPTIONS = [
 
 const SEASON_OPTIONS = ['', 'Lato', 'Zima', 'Wiosna', 'Jesień', 'Wiosna-Jesień', 'Cały rok']
 
+// Rozmiary europejskie obuwia: 36 – 46 co pół numeru ("36", "36.5", "37", … "46").
+// Generowane przez mnożenie całkowitego indeksu przez 0.5, żeby uniknąć błędów
+// zaokrąglenia zmiennoprzecinkowego przy zwykłym `+= 0.5` w pętli.
+const SHOE_SIZES = Array.from({ length: (46 - 36) * 2 + 1 }, (_, i) => {
+	const value = 36 + i * 0.5
+	return Number.isInteger(value) ? String(value) : value.toFixed(1)
+})
+
+// Standardowe rozmiary odzieżowe.
+const CLOTHING_SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+
+// Który "tryb" wyboru rozmiaru pokazać w zależności od klasy produktu:
+// - 'shoe'     → siatka rozmiarów EU (Obuwie)
+// - 'clothing' → siatka rozmiarów literowych (Odzież)
+// - 'custom'   → dowolna etykieta wpisywana ręcznie (Akcesoria — bardzo różne
+//                systemy rozmiarów: paski, czapki, rękawice, "uniwersalny" itd.)
+const SIZE_MODE_BY_TYPE = {
+	obuwie: 'shoe',
+	odziez: 'clothing',
+	akcesoria: 'custom'
+}
+
 const EMPTY_FORM = {
 	name: '',
 	type: TYPE_OPTIONS[0].value,
@@ -87,6 +109,13 @@ class AdminBase extends Component {
 		existingGallery: [],
 		newImageFiles: [],
 		newImagePreviews: [],
+		// --- Rozmiary produktu (tabela product_sizes) ---
+		// sizes: [{ id: number|null, size: string, stock: number }]
+		// id === null → jeszcze nie zapisany w bazie (nowy wiersz przy zapisie formularza).
+		sizes: [],
+		loadingSizes: false,
+		newSizeLabel: '',
+		newSizeStock: '1',
 		saving: false,
 		saveError: null,
 		search: '',
@@ -109,6 +138,10 @@ class AdminBase extends Component {
 		adminActionError: null
 	}
 	productsFetched = false
+	// Zbiór id wierszy product_sizes, jakie były w bazie w momencie otwarcia
+	// formularza edycji — pozwala przy zapisie policzyć, które rozmiary trzeba
+	// skasować (były wcześniej, a zniknęły z listy w formularzu).
+	originalSizeIds = new Set()
 
 	componentDidMount() {
 		this.checkAccess()
@@ -178,6 +211,7 @@ class AdminBase extends Component {
 	}
 
 	openCreateForm = () => {
+		this.originalSizeIds = new Set()
 		this.setState({
 			view: 'form',
 			editingProduct: null,
@@ -185,11 +219,15 @@ class AdminBase extends Component {
 			existingGallery: [],
 			newImageFiles: [],
 			newImagePreviews: [],
+			sizes: [],
+			newSizeLabel: '',
+			newSizeStock: '1',
 			saveError: null
 		})
 	}
 
 	openEditForm = (product) => {
+		this.originalSizeIds = new Set()
 		this.setState({
 			view: 'form',
 			editingProduct: product,
@@ -218,17 +256,23 @@ class AdminBase extends Component {
 				: (product.image_url ? [product.image_url] : []),
 			newImageFiles: [],
 			newImagePreviews: [],
+			sizes: [],
+			newSizeLabel: '',
+			newSizeStock: '1',
 			saveError: null
 		})
+		this.fetchSizesForProduct(product.id)
 	}
 
 	closeForm = () => {
 		// Zwalniamy object URL-e podglądów nowych plików — inaczej zostają
 		// w pamięci przeglądarki po zamknięciu formularza.
 		this.state.newImagePreviews.forEach(url => URL.revokeObjectURL(url))
+		this.originalSizeIds = new Set()
 		this.setState({
 			view: 'list', editingProduct: null,
-			existingGallery: [], newImageFiles: [], newImagePreviews: []
+			existingGallery: [], newImageFiles: [], newImagePreviews: [],
+			sizes: [], newSizeLabel: '', newSizeStock: '1'
 		})
 	}
 
@@ -268,6 +312,70 @@ class AdminBase extends Component {
 				newImagePreviews: prev.newImagePreviews.filter((_, i) => i !== index)
 			}
 		})
+	}
+
+	// =====================================================================
+	// ROZMIARY (product_sizes)
+	// =====================================================================
+
+	fetchSizesForProduct = async (productId) => {
+		this.setState({ loadingSizes: true })
+		const { data, error } = await supabase
+			.from('product_sizes')
+			.select('*')
+			.eq('product_id', productId)
+
+		if (error) {
+			console.error('Błąd pobierania rozmiarów:', error)
+			this.originalSizeIds = new Set()
+			this.setState({ sizes: [], loadingSizes: false })
+			return
+		}
+
+		this.originalSizeIds = new Set((data || []).map(row => row.id))
+		const loaded = (data || [])
+			// Rzutujemy na string, żeby działało zarówno przed, jak i po migracji
+			// kolumny `size` z float8 na text (patrz add_size_text_migration.sql).
+			.map(row => ({ id: row.id, size: String(row.size), stock: row.stock ?? 0 }))
+			.sort((a, b) => a.size.localeCompare(b.size, undefined, { numeric: true }))
+
+		this.setState({ sizes: loaded, loadingSizes: false })
+	}
+
+	// Klik na "chip" ze standardowym rozmiarem (obuwie/odzież) — dodaje go do
+	// listy z domyślnym stanem 1 szt., albo usuwa, jeśli już był zaznaczony.
+	toggleStandardSize = (sizeLabel) => {
+		this.setState(prev => {
+			const exists = prev.sizes.some(s => s.size === sizeLabel)
+			if (exists) return { sizes: prev.sizes.filter(s => s.size !== sizeLabel) }
+			return { sizes: [...prev.sizes, { id: null, size: sizeLabel, stock: 1 }] }
+		})
+	}
+
+	updateSizeStock = (sizeLabel, value) => {
+		this.setState(prev => ({
+			sizes: prev.sizes.map(s => (s.size === sizeLabel ? { ...s, stock: value } : s))
+		}))
+	}
+
+	// Dowolna etykieta rozmiaru (głównie Akcesoria — paski, czapki, "Uniwersalny" itd.).
+	addCustomSize = () => {
+		const label = this.state.newSizeLabel.trim()
+		if (!label) return
+		if (this.state.sizes.some(s => s.size === label)) {
+			alert('Taki rozmiar już jest na liście.')
+			return
+		}
+		const stock = parseInt(this.state.newSizeStock, 10)
+		this.setState(prev => ({
+			sizes: [...prev.sizes, { id: null, size: label, stock: Number.isNaN(stock) ? 0 : stock }],
+			newSizeLabel: '',
+			newSizeStock: '1'
+		}))
+	}
+
+	removeSize = (sizeLabel) => {
+		this.setState(prev => ({ sizes: prev.sizes.filter(s => s.size !== sizeLabel) }))
 	}
 
 	generateProductId = async (typeSlug) => {
@@ -353,6 +461,37 @@ class AdminBase extends Component {
 
 			const { error } = await supabase.from('products').upsert(payload)
 			if (error) throw error
+
+			// --- Synchronizacja rozmiarów (product_sizes) ---
+			// Porównujemy id-ki wierszy, jakie były w bazie przy otwarciu formularza
+			// (this.originalSizeIds), z tym, co zostało w state.sizes teraz:
+			// - id, którego już nie ma na liście → wiersz skasowany przez admina → DELETE
+			// - wiersz z id → istniał wcześniej, mógł zmienić stan magazynowy → UPSERT
+			// - wiersz bez id → dodany w formularzu → INSERT
+			const currentSizes = this.state.sizes
+			const currentIds = new Set(currentSizes.filter(s => s.id).map(s => s.id))
+			const removedIds = [...this.originalSizeIds].filter(sizeId => !currentIds.has(sizeId))
+
+			if (removedIds.length) {
+				const { error: delSizesErr } = await supabase.from('product_sizes').delete().in('id', removedIds)
+				if (delSizesErr) throw delSizesErr
+			}
+
+			const sizesToUpdate = currentSizes
+				.filter(s => s.id)
+				.map(s => ({ id: s.id, product_id: id, size: s.size, stock: parseInt(s.stock, 10) || 0 }))
+			const sizesToInsert = currentSizes
+				.filter(s => !s.id)
+				.map(s => ({ product_id: id, size: s.size, stock: parseInt(s.stock, 10) || 0 }))
+
+			if (sizesToUpdate.length) {
+				const { error: updSizesErr } = await supabase.from('product_sizes').upsert(sizesToUpdate)
+				if (updSizesErr) throw updSizesErr
+			}
+			if (sizesToInsert.length) {
+				const { error: insSizesErr } = await supabase.from('product_sizes').insert(sizesToInsert)
+				if (insSizesErr) throw insSizesErr
+			}
 
 			await this.fetchProducts()
 			this.closeForm()
@@ -593,6 +732,99 @@ class AdminBase extends Component {
 		)
 	}
 
+	// Sekcja rozmiarów w formularzu produktu — wygląd zależy od formData.type:
+	// obuwie → siatka rozmiarów EU, odzież → siatka XS–XXXL, akcesoria → dowolna
+	// etykieta wpisywana ręcznie. Wybrane rozmiary trafiają do state.sizes i mają
+	// swój własny stan magazynowy (niezależny od ogólnego "Ilość na stanie").
+	renderSizesSection() {
+		const { formData, sizes, loadingSizes, newSizeLabel, newSizeStock } = this.state
+		const mode = SIZE_MODE_BY_TYPE[formData.type] || 'custom'
+		const presetSizes = mode === 'shoe' ? SHOE_SIZES : mode === 'clothing' ? CLOTHING_SIZES : []
+		const selectedLabels = new Set(sizes.map(s => s.size))
+		const modeLabel = mode === 'shoe' ? '(EU)' : mode === 'clothing' ? '(odzież)' : '(dowolne — Akcesoria)'
+
+		return (
+			<div className={css.sizesSection}>
+				<span className={css.sizesTitle}>Rozmiary {modeLabel}</span>
+
+				{loadingSizes && <p className={css.muted}>Ładowanie rozmiarów…</p>}
+
+				{presetSizes.length > 0 && (
+					<div className={css.sizesGrid}>
+						{presetSizes.map(sizeLabel => (
+							<button
+								key={sizeLabel}
+								type='button'
+								className={`${css.sizeChip} ${selectedLabels.has(sizeLabel) ? css.sizeChipActive : ''}`}
+								onClick={() => this.toggleStandardSize(sizeLabel)}
+							>
+								{sizeLabel}
+							</button>
+						))}
+					</div>
+				)}
+
+				{mode === 'custom' && (
+					<div className={css.customSizeRow}>
+						<input
+							type='text'
+							placeholder='np. Uniwersalny, 42, One Size'
+							value={newSizeLabel}
+							onChange={(e) => this.setState({ newSizeLabel: e.target.value })}
+						/>
+						<input
+							type='number'
+							min='0'
+							placeholder='ilość'
+							value={newSizeStock}
+							onChange={(e) => this.setState({ newSizeStock: e.target.value })}
+						/>
+						<button type='button' className={css.btnGhost} onClick={this.addCustomSize}>
+							+ Dodaj rozmiar
+						</button>
+					</div>
+				)}
+
+				{sizes.length > 0 ? (
+					<div className={css.sizesList}>
+						{sizes.map(s => (
+							<div key={s.size} className={css.sizeListRow}>
+								<span className={css.sizeListLabel}>{s.size}</span>
+								<input
+									type='number'
+									min='0'
+									className={css.sizeStockInput}
+									value={s.stock}
+									onChange={(e) => this.updateSizeStock(s.size, e.target.value)}
+									placeholder='ilość'
+								/>
+								<button
+									type='button'
+									className={css.sizeRemoveBtn}
+									onClick={() => this.removeSize(s.size)}
+									aria-label='Usuń rozmiar'
+								>
+									×
+								</button>
+							</div>
+						))}
+					</div>
+				) : (
+					!loadingSizes && (
+						<p className={css.formHint}>
+							Brak dodanych rozmiarów — produkt będzie widoczny bez podziału na rozmiary.
+						</p>
+					)
+				)}
+
+				<p className={css.formHint}>
+					Rozmiary i stany magazynowe per rozmiar zapisują się w osobnej tabeli
+					product_sizes i są niezależne od ogólnego pola „Ilość na stanie" powyżej.
+				</p>
+			</div>
+		)
+	}
+
 	renderForm() {
 		const { formData, editingProduct, existingGallery, newImagePreviews, saving, saveError } = this.state
 
@@ -708,6 +940,8 @@ class AdminBase extends Component {
 						</label>
 					</div>
 					<p className={css.formHint}>Płeć / Typ / Rodzaj / Kolor: kilka wartości oddzielaj przecinkiem — to właśnie te pola widać potem jako chipy w filtrach katalogu.</p>
+
+					{this.renderSizesSection()}
 
 					<label className={css.field}>
 						<span>Opis</span>
