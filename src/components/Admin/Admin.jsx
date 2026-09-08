@@ -20,7 +20,7 @@ const SEASON_OPTIONS = ['', 'Lato', 'Zima', 'Wiosna', 'Jesień', 'Wiosna-Jesień
 // Rozmiary europejskie obuwia: 36 – 46 co pół numeru ("36", "36.5", "37", … "46").
 // Generowane przez mnożenie całkowitego indeksu przez 0.5, żeby uniknąć błędów
 // zaokrąglenia zmiennoprzecinkowego przy zwykłym `+= 0.5` w pętli.
-const SHOE_SIZES = Array.from({ length: (46 - 36) * 2 + 1 }, (_, i) => {
+const SHOE_SIZES = Array.from({ length: (49.5 - 36) * 2 + 1 }, (_, i) => {
 	const value = 36 + i * 0.5
 	return Number.isInteger(value) ? String(value) : value.toFixed(1)
 })
