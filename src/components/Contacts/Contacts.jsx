@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Phone } from 'lucide-react'
 
 //? imports styles
 import css from './Contacts.module.css'
@@ -90,7 +89,7 @@ export class Contacts extends Component {
 								<span>lub</span>
 							</div>
 							<div className={css.contacts__phoneblock}>
-								<Phone className={css.contacts__phoneicon} size={28} strokeWidth={2} />
+								<span className={css.contacts__phoneicon}>📞</span>
 								<div>
 									<a href='tel:+48502725148' className={css.contacts__phonenumber}>
 										+48 502 725 148
