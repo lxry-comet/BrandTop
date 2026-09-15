@@ -35,6 +35,41 @@ function uniqueValues(items, getter) {
 	return [...set].sort((a, b) => String(a).localeCompare(String(b), 'pl'))
 }
 
+// Klucz do porównywania marek: trim + lowercase + usunięcie polskich znaków
+// diakrytycznych (np. "Świnoujście" → "swinoujscie"). BrandStrip.jsx celowo
+// linkuje uproszczoną, ASCII-ową pisownię ("Swinoujscie"), a w bazie marka
+// bywa wpisana z pełnymi polskimi znakami ("Świnoujście") — bez usunięcia
+// diakrytyków dopasowanie nigdy by się nie powiodło, mimo że to dokładnie
+// ta sama marka. Uwaga: polskie "Ł"/"ł" nie rozkłada się przez NFD (to
+// osobna litera, nie "l" z ogonkiem) — gdyby pojawiła się marka z Ł, trzeba
+// by dodać osobną podmianę.
+function normalizeBrandKey(value) {
+	return String(value)
+		.trim()
+		.toLowerCase()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+}
+
+// Dedykowana wersja dla marek — porównanie znormalizowanym kluczem (patrz
+// normalizeBrandKey). Część produktów ma markę zapisaną niespójnie (np.
+// 'Nike' i 'nike' — dokładnie ten sam problem, co wcześniej z products.type),
+// przez co zwykłe uniqueValues() pokazywało dwa osobne chipy dla tej samej
+// marki. Tutaj grupujemy po znormalizowanym kluczu, a jako etykietę w
+// filtrze zachowujemy pierwszy napotkany zapis.
+function uniqueBrands(items) {
+	const map = new Map()
+	items.forEach(item => {
+		const raw = item.brand
+		if (!raw) return
+		const trimmed = String(raw).trim()
+		if (!trimmed) return
+		const key = normalizeBrandKey(trimmed)
+		if (!map.has(key)) map.set(key, trimmed)
+	})
+	return [...map.values()].sort((a, b) => a.localeCompare(b, 'pl'))
+}
+
 // Rozmiary — jeśli wszystkie da się zinterpretować jako liczby (rozmiary
 // obuwia w EU), sortujemy numerycznie; w przeciwnym razie alfabetycznie.
 function uniqueSizes(items) {
@@ -119,6 +154,12 @@ export class Catalog extends Component {
 		// z czasów przed poprawką CategoryNav.jsx/Admin.jsx), a nowe zapisywane są
 		// jako 'obuwie'. Przy dokładnym .eq() te stare rekordy w ogóle nie pasowały
         // do linku "Obuwie" — stąd 0 wyników mimo że "Wszystko" je pokazywało.
+		//
+		// Uwaga: `category` jest ustawiane tylko wtedy, gdy w URL jest ?type=...
+		// (np. z CategoryNav). Linki z BrandStrip.jsx celowo NIE ustawiają `type`,
+		// więc tutaj pobierzemy produkty ze WSZYSTKICH kategorii, a filtrowanie
+		// po marce (patrz getFilteredProducts) zadziała niezależnie od tego,
+		// czy dana marka sprzedaje obuwie, odzież czy akcesoria.
 		if (category) query = query.ilike('type', category)
 
 		const { data, error } = await query
@@ -207,13 +248,17 @@ export class Catalog extends Component {
 
 	// Uniwersalny toggle dla wszystkich wielokrotnego wyboru grup chipów
 	// (Płeć/Marka/Rozmiar/Sezon/Typ/Rodzaj/Kolor) — jedna funkcja zamiast
-	// siedmiu prawie identycznych.
-	toggleFilterValue = (field, value) => {
+	// siedmiu prawie identycznych. Opcjonalny keyFn pozwala porównywać
+	// wartości po znormalizowanym kluczu (używane dla Marka —
+	// normalizeBrandKey — żeby "MKS Flota Swinoujscie" z URL-a i "MKS Flota
+	// Świnoujście" z bazy były traktowane jako ta sama, już zaznaczona wartość).
+	toggleFilterValue = (field, value, keyFn = (v) => v) => {
 		this.setState(prev => {
 			const current = prev[field]
-			const has = current.includes(value)
+			const valueKey = keyFn(value)
+			const has = current.some(v => keyFn(v) === valueKey)
 			return {
-				[field]: has ? current.filter(v => v !== value) : [...current, value],
+				[field]: has ? current.filter(v => keyFn(v) !== valueKey) : [...current, value],
 				visibleCount: visibleProductsCount
 			}
 		})
@@ -234,7 +279,7 @@ export class Catalog extends Component {
 	getFilterOptions() {
 		const { data } = this.state
 		return {
-			brands: uniqueValues(data, p => p.brand),
+			brands: uniqueBrands(data),
 			sizes: uniqueSizes(data),
 			seasons: uniqueValues(data, p => p.season),
 			types: uniqueValues(data, p => p.productType),
@@ -251,13 +296,31 @@ export class Catalog extends Component {
 		} = this.state
 
 		const searchTerm = search.trim().toLowerCase()
+		// Znormalizowane marki do porównania (trim + lowercase + bez polskich
+		// diakrytyków) — patrz normalizeBrandKey()/uniqueBrands() powyżej: te
+		// same zasady muszą być użyte tutaj, inaczej dedupowany/zaznaczony
+		// chip (np. "Nike" albo "MKS Flota Swinoujscie" z linku bez ogonków)
+		// przestanie pasować do wariantu zapisanego w bazie.
+		const selectedBrandKeys = selectedBrands.map(normalizeBrandKey)
 
 		return data.filter(p => {
 			if (searchTerm && !(p.name || '').toLowerCase().includes(searchTerm)) return false
 			if (showAvailableOnly && availableIds && !availableIds.has(p.id)) return false
 			if (saleOnly && !p.oldPrice) return false
 			if (selectedGenders.length && !selectedGenders.some(g => p.gender.includes(g))) return false
-			if (selectedBrands.length && !selectedBrands.includes(p.brand)) return false
+			if (selectedBrandKeys.length) {
+				// Nie każdy tag z BrandStrip.jsx to realna marka producenta —
+				// np. "MKS Flota Swinoujscie" to klub/kolekcja, a w polu brand
+				// tego konkretnego produktu jest wpisany faktyczny producent
+				// ("Adidas"), nazwa klubu jest tylko w name/model. Dlatego oprócz
+				// dokładnego dopasowania po brand sprawdzamy też, czy tag
+				// występuje w name/model — obejmuje oba przypadki: prawdziwe
+				// marki (Adidas, Nike...) i tagi klubów/kolekcji.
+				const brandKey = normalizeBrandKey(p.brand || '')
+				const haystack = normalizeBrandKey(`${p.brand || ''} ${p.name || ''} ${p.model || ''}`)
+				const matches = selectedBrandKeys.some(key => key === brandKey || haystack.includes(key))
+				if (!matches) return false
+			}
 			if (selectedSizes.length) {
 				const hasSelectedSize = p.sizes.some(s => s.stock > 0 && selectedSizes.includes(s.size))
 				if (!hasSelectedSize) return false
@@ -271,9 +334,12 @@ export class Catalog extends Component {
 		})
 	}
 
-	renderChipGroup(label, field, options) {
+	// keyFn (opcjonalny) — normalizator do porównań, patrz toggleFilterValue.
+	// Bez niego (domyślnie identity) zachowanie jest identyczne jak wcześniej.
+	renderChipGroup(label, field, options, keyFn = (v) => v) {
 		if (!options.length) return null
 		const selected = this.state[field]
+		const selectedKeys = selected.map(keyFn)
 
 		return (
 			<div className={css.filterGroup}>
@@ -282,8 +348,8 @@ export class Catalog extends Component {
 					{options.map(opt => (
 						<span
 							key={opt}
-							className={`${css.chip}${selected.includes(opt) ? ' ' + css.chipSelected : ''}`}
-							onClick={() => this.toggleFilterValue(field, opt)}
+							className={`${css.chip}${selectedKeys.includes(keyFn(opt)) ? ' ' + css.chipSelected : ''}`}
+							onClick={() => this.toggleFilterValue(field, opt, keyFn)}
 						>
 							{opt}
 						</span>
@@ -393,7 +459,7 @@ export class Catalog extends Component {
 					</div>
 
 					{this.renderChipGroup('Płeć', 'selectedGenders', GENDER_OPTIONS)}
-					{this.renderChipGroup('Marka', 'selectedBrands', brands)}
+					{this.renderChipGroup('Marka', 'selectedBrands', brands, normalizeBrandKey)}
 					{sizes.length > 0 && (
 						<div className={css.filterGroup}>
 							<label>{sizeLabel}</label>
