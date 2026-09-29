@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { supabase } from '@/lib/supabaseClient'
+import { Component } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 //? imports styles
 import css from './Admin.module.css'
@@ -74,7 +74,7 @@ function parseList(str) {
 // Usuwa polskie znaki diakrytyczne — ten sam pomysł co transliteracja
 // w skrypcie Python do generowania PDF-a katalogu.
 function slugify(text) {
-	const map = { ą:'a', ć:'c', ę:'e', ł:'l', ń:'n', ó:'o', ś:'s', ź:'z', ż:'z' }
+	const map = { ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z' }
 	return text
 		.toLowerCase()
 		.split('')
@@ -82,6 +82,32 @@ function slugify(text) {
 		.join('')
 		.replace(/[^a-z0-9]+/g, '-')
 		.replace(/(^-|-$)/g, '')
+}
+
+function resizeImage(file, maxSize, quality) {
+	return new Promise((resolve, reject) => {
+		const image = new Image()
+		const objectUrl = URL.createObjectURL(file)
+
+		image.onload = () => {
+			const scale = Math.min(1, maxSize / Math.max(image.width, image.height))
+			const canvas = document.createElement('canvas')
+			canvas.width = Math.max(1, Math.round(image.width * scale))
+			canvas.height = Math.max(1, Math.round(image.height * scale))
+			canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height)
+			URL.revokeObjectURL(objectUrl)
+
+			canvas.toBlob(blob => {
+				if (blob) resolve(blob)
+				else reject(new Error('Nie udało się zoptymalizować zdjęcia.'))
+			}, 'image/jpeg', quality)
+		}
+		image.onerror = () => {
+			URL.revokeObjectURL(objectUrl)
+			reject(new Error('Nie udało się odczytać zdjęcia.'))
+		}
+		image.src = objectUrl
+	})
 }
 
 // Mały funkcyjny wrapper, żeby class component mógł skorzystać z hooka
@@ -395,16 +421,19 @@ class AdminBase extends Component {
 	}
 
 	uploadImage = async (file, productId) => {
-		const ext = file.name.split('.').pop()
 		// Date.now() sam w sobie mógłby się powtórzyć przy uploadzie kilku
 		// plików w pętli (ta sama milisekunda) i nadpisać poprzednie zdjęcie —
 		// losowy sufiks gwarantuje unikalną ścieżkę dla każdego pliku.
 		const uniqueSuffix = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-		const path = `${productId}/${uniqueSuffix}.${ext}`
+		const path = `${productId}/${uniqueSuffix}.jpg`
 
+		const optimizedImage = await resizeImage(file, 1600, 0.8)
 		const { error: uploadError } = await supabase.storage
 			.from('product-images')
-			.upload(path, file, { upsert: true })
+			.upload(path, optimizedImage, {
+				upsert: true,
+				contentType: 'image/jpeg'
+			})
 
 		if (uploadError) throw uploadError
 
